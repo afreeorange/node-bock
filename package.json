@@ -1,0 +1,23 @@
+{
+  "name": "node-bock",
+  "version": "1.0.0",
+  "author": "Nikhil Anand <mail@nikhil.io> (https://nikhil.io)",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "bin": {
+    "bock": "./dist/index.js"
+  },
+  "scripts": {
+    "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
+    "build": "tsc -p ."
+  },
+  "dependencies": {
+    "@types/node": "^16.9.2",
+    "chalk": "^4.1.2",
+    "fs-extra": "^10.0.0",
+    "isomorphic-git": "^1.10.0",
+    "nodemon": "^2.0.12",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.3"
+  }
+}
