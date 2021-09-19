@@ -1,19 +1,9 @@
-const fs = require("fs");
-const git = require("isomorphic-git");
+import fs from "fs";
+import git from "isomorphic-git";
+const { StringDecoder } = require("string_decoder");
+const decoder = new StringDecoder("utf8");
 
-export const getRevision = async (
-  articleRoot: string,
-  articlePath: string,
-  commitId: string
-): Promise<any> =>
-  git.readBlob({
-    fs,
-    dir: articleRoot,
-    filepath: articlePath,
-    oid: commitId,
-  });
-
-export const getCommits = async (
+export const getRevisions = async (
   articleRoot: string,
   articlePath: string
 ): Promise<any> =>
@@ -24,6 +14,21 @@ export const getCommits = async (
     force: true,
     follow: true,
   });
+
+export const getRevision = async (
+  articleRoot: string,
+  articlePath: string,
+  commitId: string
+): Promise<string> => {
+  const { blob } = await git.readBlob({
+    fs,
+    dir: articleRoot,
+    filepath: articlePath,
+    oid: commitId,
+  });
+
+  return decoder.write(blob);
+};
 
 // export const readArticle = async (articlePath: string): Promise<string> => {
 //   return fs.readFile(articlePath);
