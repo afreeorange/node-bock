@@ -1,19 +1,31 @@
 import fs from "fs";
-import git from "isomorphic-git";
+import git, { ReadCommitResult } from "isomorphic-git";
+import { RevisionSummary } from "./types";
 const { StringDecoder } = require("string_decoder");
-const decoder = new StringDecoder("utf8");
+
+export const decoder = new StringDecoder("utf8");
+
+const refineRevision = (commit: ReadCommitResult): RevisionSummary => ({
+  id: commit.oid,
+  author: commit.commit.author.name,
+  email: commit.commit.author.email,
+  committed: new Date(commit.commit.author.timestamp * 1000),
+  message: commit.commit.message,
+});
 
 export const getRevisions = async (
   articleRoot: string,
   articlePath: string
-): Promise<any> =>
-  await git.log({
-    fs,
-    dir: articleRoot,
-    filepath: articlePath,
-    force: true,
-    follow: true,
-  });
+): Promise<RevisionSummary[]> =>
+  (
+    await git.log({
+      fs,
+      dir: articleRoot,
+      filepath: articlePath,
+      force: true,
+      follow: true,
+    })
+  ).map((c) => refineRevision(c));
 
 export const getRevision = async (
   articleRoot: string,
