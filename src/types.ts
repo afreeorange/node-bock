@@ -12,7 +12,12 @@
 
 // export type Status = "clean" | "dirty";
 
-type EntityType = "article" | "folder";
+export type EntityType = "article" | "folder";
+
+export type EntityPath = {
+  articleRoot: string;
+  entityPath: string;
+};
 
 /**
  * A list of properties common to both an article and a folder. We use these to
