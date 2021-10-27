@@ -34,7 +34,6 @@ type EntityCommon = {
   hierarchy: EntityHierarchy[];
   type: EntityType;
   name: string;
-  sizeInBytes: number;
 
   /**
    * Relative path to article or folder in repo. We don't expose the full path
