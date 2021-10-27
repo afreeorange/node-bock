@@ -33,7 +33,11 @@ export const entityExists = async (
 export const wordCount = (articleText: string): number =>
   articleText.split(" ").length;
 
-export const renderEntity = async () => {};
+export const renderEntities = async (
+  articleRoot: string,
+  outputFolder: string,
+  listOfEntities: Entity[],
+) => {};
 
 export const createSingleEntity = async (
   articleRoot: string,
@@ -62,46 +66,40 @@ export const createSingleEntity = async (
     }
   }
 
-  let data;
+  let data: any = {
+    created,
+    modified,
+    hierarchy,
+    id,
+    name,
+    type,
+    uri,
+    sizeInBytes,
+  };
 
   if (type === "article") {
     const articleText = (await readFile(`${articleRoot}/${path}`)).toString();
+    const html = parser.render(articleText);
 
     data = {
-      created,
-      modified,
-      hierarchy,
-      id,
-      name,
-      type,
-      uri,
-      sizeInBytes,
-
+      ...data,
       source: articleText,
       wordCount: wordCount(articleText),
       excerpt: "",
-      html: parser.render(articleText),
+      html,
       uncommitted: false,
       revisions: [],
     };
   } else {
     const children = await getEntities(articleRoot, path, 1);
-    // console.log("name :>> ", name, children);
 
     data = {
-      created,
-      modified,
-      hierarchy,
-      id,
-      name,
-      type,
-      uri,
-      sizeInBytes,
-
+      ...data,
       children: children.map((c) => ({
         name: c.name,
         type: c.type,
         path: c.path,
+        uri: c.uri,
       })),
     };
   }
@@ -149,7 +147,6 @@ export const removeExtension = (articlePath: string) =>
 
 type EntityHierarchy = {
   name: string;
-  path: string;
   type: EntityType;
 };
 
@@ -165,7 +162,6 @@ export const generateHierarchyFrom = (
       .filter((p) => p !== ""),
   ].map((e) => ({
     name: removeExtension(e),
-    path: removeExtension(generatePrettyPath(e)),
     type: extname(e).toLowerCase().includes("md") ? "article" : "folder",
   }));
 
@@ -180,7 +176,7 @@ type Entity = {
 
   sizeInBytes: number;
 
-  // How to address an entity
+  // How to address an entity. Title, path on disk (relative), URI
   name: string;
   path: string;
   uri: string;
@@ -192,8 +188,10 @@ export const getEntities = async (
   maxDepth: number = MAX_DEPTH,
 ): Promise<Entity[]> => {
   console.log(
-    `SEARCHING ${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`,
+    "object :>> ",
+    `${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`,
   );
+
   return (
     await fg(`${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`, {
       deep: maxDepth,
