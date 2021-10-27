@@ -15,6 +15,7 @@
     "chalk": "^4.1.2",
     "cli-progress": "^3.9.1",
     "commander": "^8.3.0",
+    "date-fns": "^2.25.0",
     "directory-tree": "^3.0.0",
     "express": "^4.17.1",
     "fast-glob": "^3.2.7",

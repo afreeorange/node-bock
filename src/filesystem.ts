@@ -5,6 +5,7 @@ import { access, mkdir, writeFile, readFile } from "fs/promises";
 import fg from "fast-glob";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
+import formatRelative from "date-fns/formatRelative";
 
 import {
   ASSETS_FOLDER,
@@ -32,24 +33,26 @@ export const entityExists = async (
 export const wordCount = (articleText: string): number =>
   articleText.split(" ").length;
 
+export const renderEntity = async () => {};
+
 export const createSingleEntity = async (
   articleRoot: string,
   outputFolder: string,
   entity: Entity,
 ): Promise<void> => {
   const {
-    type,
     created,
-    modified,
-    sizeInBytes,
     hierarchy,
     id,
+    modified,
     name,
-    sourceFile,
     path,
+    sizeInBytes,
+    type,
+    uri,
   } = entity;
 
-  let entityToMake = `${outputFolder}/${path}`;
+  let entityToMake = `${outputFolder}/${uri}`;
 
   try {
     await mkdir(entityToMake);
@@ -60,10 +63,9 @@ export const createSingleEntity = async (
   }
 
   let data;
+
   if (type === "article") {
-    const articleText = (
-      await readFile(`${articleRoot}/${sourceFile}`)
-    ).toString();
+    const articleText = (await readFile(`${articleRoot}/${path}`)).toString();
 
     data = {
       created,
@@ -72,18 +74,19 @@ export const createSingleEntity = async (
       id,
       name,
       type,
-
+      uri,
       sizeInBytes,
+
       source: articleText,
       wordCount: wordCount(articleText),
       excerpt: "",
       html: parser.render(articleText),
-
       uncommitted: false,
       revisions: [],
     };
   } else {
-    const children = await getEntities(articleRoot, name, 1);
+    const children = await getEntities(articleRoot, path, 1);
+    // console.log("name :>> ", name, children);
 
     data = {
       created,
@@ -92,6 +95,9 @@ export const createSingleEntity = async (
       id,
       name,
       type,
+      uri,
+      sizeInBytes,
+
       children: children.map((c) => ({
         name: c.name,
         type: c.type,
@@ -167,29 +173,32 @@ type EntityType = "article" | "folder";
 
 type Entity = {
   created: Date;
-  createdRelative: Date;
-  sourceFile: string | null;
   hierarchy: EntityHierarchy[];
   id: string;
   modified: Date;
-  modifiedRelative: Date;
+  type: EntityType;
+
+  sizeInBytes: number;
+
+  // How to address an entity
   name: string;
   path: string;
-  sizeInBytes: number;
-  type: EntityType;
+  uri: string;
 };
 
 export const getEntities = async (
   articleRoot: string,
   prefix: string = "",
   maxDepth: number = MAX_DEPTH,
-): Promise<Entity[]> =>
-  (
+): Promise<Entity[]> => {
+  console.log(
+    `SEARCHING ${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`,
+  );
+  return (
     await fg(`${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`, {
       deep: maxDepth,
       followSymbolicLinks: false,
       ignore: ENTITIES_TO_IGNORE,
-      markDirectories: true,
       objectMode: true,
       onlyFiles: false,
       stats: true,
@@ -202,19 +211,18 @@ export const getEntities = async (
         !e.path.includes(ASSETS_FOLDER),
     )
     .map((e) => ({
-      created: e.stats!.ctime,
-      createdRelative: e.stats!.ctime,
-      sourceFile: e.dirent.isFile()
-        ? e.path.replace(`${articleRoot}/`, "")
-        : null,
-      hierarchy: generateHierarchyFrom(articleRoot, e.path),
       id: generateIdFrom(articleRoot, e.path),
+      created: e.stats!.ctime,
+      hierarchy: generateHierarchyFrom(articleRoot, e.path),
       modified: e.stats!.mtime,
-      modifiedRelative: e.stats!.mtime,
+      type: e.dirent.isFile() ? "article" : "folder",
+
       name: removeExtension(e.name),
-      path: removeExtension(
+      uri: removeExtension(
         generatePrettyPath(e.path.replace(`${articleRoot}/`, "")),
       ),
+      path: e.path.replace(`${articleRoot}/`, ""),
+
       sizeInBytes: e.stats!.size,
-      type: e.dirent.isFile() ? "article" : "folder",
     }));
+};

@@ -8,6 +8,7 @@ import { createEntities, getEntities, copyAssets } from "./filesystem";
   const { articleRoot, outputFolder } = CLI.opts();
 
   const entries = await getEntities(articleRoot);
+  // entries.map((e) => console.log(e));
   await createEntities(articleRoot, outputFolder, entries);
   console.log(`Finished writing ${entries.length} entities`);
   copyAssets(outputFolder);
