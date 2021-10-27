@@ -3,22 +3,7 @@ import { access, stat, readFile } from "fs/promises";
 
 import { Article, EntityHierarchy, Folder } from "./types";
 
-
-
-
 // /** ---- */
-
-// export const maybeFolder = async (
-//   articleRoot: string,
-//   entityPath: string
-// ): Promise<boolean> => {
-//   try {
-//     await access(`${articleRoot}/${entityPath}`, constants.R_OK);
-//     return true;
-//   } catch {
-//     return false;
-//   }
-// };
 
 // export const maybeArticle = async (
 //   articleRoot: string,

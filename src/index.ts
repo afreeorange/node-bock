@@ -1,18 +1,28 @@
 #!/usr/bin/env node
 
 import CLI from "./cli";
-import { getEntities } from "./filesystem";
+import { createEntities, getEntities, copyAssets } from "./filesystem";
 
 (async () => {
   CLI.parse(process.argv);
-  const options = CLI.opts();
-  const entries = await getEntities(options.articleRoot);
+  const { articleRoot, outputFolder } = CLI.opts();
 
-  entries.map((e: any) => console.log(e));
-  // console.log(entries.length);
+  const entries = await getEntities(articleRoot);
+  await createEntities(articleRoot, outputFolder, entries);
+  console.log(`Finished writing ${entries.length} entities`);
+  copyAssets(outputFolder);
+
+  console.log(`Found ${entries.length} entities in ${articleRoot}`);
+  console.log(`Output folder is ${outputFolder}`);
 })();
 
-// console.log("getDirectoryTree :>> ", getDirectoryTree(articleRoot));
-
-const foo =
-  "/Users/nikhilanand/personal/wiki.nikhil.io.articles/Food/Thai Curry Experiments/Basic Curry - 03.md";
+/**
+ * Food/index.json
+ * Food/Thai_Curry_Experiments/index.json
+ * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/index.json
+ * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/revisions/asjahsd718273kqbwfaki011.json
+ * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/revisions/asjahsd718273kqbwfaki011.json
+ * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/revisions/asjahsd718273kqbwfaki011.json
+ * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/revisions/asjahsd718273kqbwfaki011.json
+ * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/revisions/asjahsd718273kqbwfaki011.json
+ */

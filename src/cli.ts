@@ -8,6 +8,13 @@ bockCLI
     "-a, --article-root <articleRoot>",
     "Git repo containing your articles"
   )
-  .option("-d, --debug", "Show debugging information", false);
+  .requiredOption(
+    "-o, --output-folder <outputFolder>",
+    "Output folder for generated articles"
+  )
+  .option("-d, --debug", "Show debugging information", false)
+  .option("-s, --serve", "Run a local live-reloading server", false)
+  .option("-b, --build", "Build all the static output", false)
+  .option("-c, --clean", "Clear output folder before writing", false);
 
 export default bockCLI;

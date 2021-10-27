@@ -60,6 +60,7 @@ type EntityCommon = {
 
 export type EntityHierarchy = {
   name: string;
+  path: string;
   type: EntityType;
 };
 

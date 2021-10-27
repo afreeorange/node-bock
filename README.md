@@ -1,5 +1,15 @@
 # Bock
 
+## TODO
+
+* [ ] Check if git repo
+* [ ] Check output folder
+* [ ] remove trailing slashes
+* [ ] LR local server
+* [ ] HTML generation
+* [ ] SQL generation job
+* [ ] SQL search JavaScript
+
 ## Design Notes
 
 ---
