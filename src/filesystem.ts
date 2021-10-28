@@ -1,10 +1,13 @@
-import { constants } from "fs";
+import { constants, write } from "fs";
 import { extname } from "path";
+import { red, yellow } from "chalk";
 import { access, mkdir, writeFile, readFile } from "fs/promises";
 
+import { copy } from "fs-extra";
 import fg from "fast-glob";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
+import nunjucks from "nunjucks";
 
 import {
   ASSETS_FOLDER,
@@ -32,66 +35,13 @@ export const entityExists = async (
 export const wordCount = (articleText: string): number =>
   articleText.split(" ").length;
 
-export const renderEntities = async (
-  articleRoot: string,
-  outputFolder: string,
-  listOfEntities: Entity[],
-) => {
-  listOfEntities.map(async (entity) => {
-    const {
-      created,
-      hierarchy,
-      id,
-      modified,
-      name,
-      path,
-      sizeInBytes,
-      type,
-      uri,
-    } = entity;
-
-    let entityToRead = `${outputFolder}/${uri}/index.json`;
-    let entityToMake = `${outputFolder}/${uri}/index.html`;
-
-    let meta;
-    try {
-      meta = JSON.parse((await readFile(entityToRead)).toString());
-    } catch (error) {
-      console.error(`Could not write ${entityToMake}`);
-    }
-
-    if (entity.type === "article") {
-      await writeFile(
-        entityToMake,
-        `
-      <h1>${entity.name}</h1>
-      ${meta.html}
-      `,
-      );
-    } else {
-      await writeFile(
-        entityToMake,
-        `
-      <h1>${entity.name}</h1>
-      <ul>
-        ${entity.hierarchy
-          .map(
-            (e) =>
-              `<li><a href="${e.name === ROOT_NODE_NAME ? "/" : e.uri}">${
-                e.name
-              }</a></li>`,
-          )
-          .join("")}
-      </ul>
-      <ul>
-        ${meta.children
-          .map((c: any) => `<li><a href="/${c.uri}">${c.name}</a></li>`)
-          .join("")}
-      </ul>
-      `,
-      );
-    }
-  });
+export const renderEntity = async (outputFolder: string, entity: Entity) => {
+  await writeFile(
+    `${outputFolder}/${entity.uri}/index.html`,
+    nunjucks.render(`${__dirname}/templates/${entity.type}.html`, {
+      entity: entity,
+    }),
+  );
 };
 
 export const createSingleEntity = async (
@@ -114,10 +64,10 @@ export const createSingleEntity = async (
   let entityToMake = `${outputFolder}/${uri}`;
 
   try {
-    await mkdir(entityToMake);
+    await mkdir(entityToMake, { recursive: true });
   } catch (error) {
     if (!(error as Error).message.includes("EEXIST")) {
-      console.error(`Problem creating ${entityToMake}`);
+      console.error(red(`Problem creating ${entityToMake}: ${error}`));
     }
   }
 
@@ -163,6 +113,8 @@ export const createSingleEntity = async (
     `${entityToMake}/index.json`,
     JSON.stringify(data, null, JSON_PADDING),
   );
+
+  await renderEntity(outputFolder, data);
 };
 
 export const createEntities = async (
@@ -173,22 +125,31 @@ export const createEntities = async (
   const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
   bar.start(listOfEntities.length, 0);
 
-  listOfEntities.map(async (e) => {
-    /**
-     * TODO: Why does this work and doing this at the end not?
-     * https://github.com/npkgz/cli-progress/issues/104
-     *
-     * Try to understand this...
-     */
-    bar.increment(1);
-    await createSingleEntity(articleRoot, outputFolder, e);
-  });
+  await Promise.all([
+    listOfEntities.map(async (e) => {
+      /**
+       * TODO: Why does this work and doing this at the end not?
+       * https://github.com/npkgz/cli-progress/issues/104
+       *
+       * Try to understand this...
+       */
+      bar.increment(1);
+      await createSingleEntity(articleRoot, outputFolder, e);
+    }),
+  ]);
 
   bar.stop();
 };
 
-export const copyAssets = (outputFolder: string) => {
-  console.log("Will copy assets");
+export const copyAssets = async (articleRoot: string, outputFolder: string) => {
+  try {
+    await copy(
+      `${articleRoot}/${ASSETS_FOLDER}`,
+      `${outputFolder}/${ASSETS_FOLDER}`,
+    );
+  } catch (error) {
+    console.log(`Could not copy assets: ${error}`);
+  }
 };
 
 export const generateIdFrom = (articleRoot: string, articlePath: string) =>
@@ -239,6 +200,12 @@ type Entity = {
   uri: string;
 
   children?: any[];
+  source?: string;
+  wordCount?: number;
+  excerpt?: string;
+  html?: string;
+  uncommitted?: boolean;
+  revisions?: string[];
 };
 
 export const getEntities = async (
@@ -246,11 +213,6 @@ export const getEntities = async (
   prefix: string = "",
   maxDepth: number = MAX_DEPTH,
 ): Promise<Entity[]> => {
-  console.log(
-    "object :>> ",
-    `${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`,
-  );
-
   return (
     await fg(`${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`, {
       deep: maxDepth,
@@ -263,8 +225,7 @@ export const getEntities = async (
   )
     .filter(
       (e) =>
-        e.dirent.isFile() ||
-        e.dirent.isDirectory() ||
+        (e.dirent.isFile() || e.dirent.isDirectory()) &&
         !e.path.includes(ASSETS_FOLDER),
     )
     .map((e) => ({

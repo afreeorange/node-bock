@@ -1,27 +1,27 @@
 #!/usr/bin/env node
 
+import { writeFile } from "fs/promises";
 import CLI from "./cli";
-import {
-  createEntities,
-  getEntities,
-  copyAssets,
-  renderEntities,
-} from "./filesystem";
+import { createEntities, getEntities, copyAssets } from "./filesystem";
 
 (async () => {
   CLI.parse(process.argv);
   const { articleRoot, outputFolder } = CLI.opts();
 
-  const entries = await getEntities(articleRoot);
-  await createEntities(articleRoot, outputFolder, entries);
-  console.log(`Finished writing ${entries.length} entities`);
-  await renderEntities(articleRoot, outputFolder, entries);
-  copyAssets(outputFolder);
+  const listOfEntities = await getEntities(articleRoot);
+  await createEntities(articleRoot, outputFolder, listOfEntities);
+  await copyAssets(articleRoot, outputFolder);
 
-  console.log(`Found ${entries.length} entities in ${articleRoot}`);
+  // await writeFile(
+  //   "/Users/nikhil/Downloads/out.json",
+  //   JSON.stringify(listOfEntities, null, 2),
+  // );
+
+  console.log(`Finished writing ${listOfEntities.length} entities`);
+  console.log(`Found ${listOfEntities.length} entities in ${articleRoot}`);
   console.log(`Output folder is ${outputFolder}`);
 
-  // entries.map((e) => console.log(e));
+  // listOfEntities.map((e) => console.log(e));
 })();
 
 /**
