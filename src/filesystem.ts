@@ -5,7 +5,6 @@ import { access, mkdir, writeFile, readFile } from "fs/promises";
 import fg from "fast-glob";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
-import formatRelative from "date-fns/formatRelative";
 
 import {
   ASSETS_FOLDER,
@@ -37,7 +36,63 @@ export const renderEntities = async (
   articleRoot: string,
   outputFolder: string,
   listOfEntities: Entity[],
-) => {};
+) => {
+  listOfEntities.map(async (entity) => {
+    const {
+      created,
+      hierarchy,
+      id,
+      modified,
+      name,
+      path,
+      sizeInBytes,
+      type,
+      uri,
+    } = entity;
+
+    let entityToRead = `${outputFolder}/${uri}/index.json`;
+    let entityToMake = `${outputFolder}/${uri}/index.html`;
+
+    let meta;
+    try {
+      meta = JSON.parse((await readFile(entityToRead)).toString());
+    } catch (error) {
+      console.error(`Could not write ${entityToMake}`);
+    }
+
+    if (entity.type === "article") {
+      await writeFile(
+        entityToMake,
+        `
+      <h1>${entity.name}</h1>
+      ${meta.html}
+      `,
+      );
+    } else {
+      await writeFile(
+        entityToMake,
+        `
+      <h1>${entity.name}</h1>
+      <ul>
+        ${entity.hierarchy
+          .map(
+            (e) =>
+              `<li><a href="${e.name === ROOT_NODE_NAME ? "/" : e.uri}">${
+                e.name
+              }</a></li>`,
+          )
+          .join("")}
+      </ul>
+      <ul>
+        ${meta.children
+          .map((c: any) => `<li><a href="/${c.uri}">${c.name}</a></li>`)
+          .join("")}
+      </ul>
+      `,
+      );
+    }
+  });
+};
 
 export const createSingleEntity = async (
   articleRoot: string,
@@ -126,7 +181,7 @@ export const createEntities = async (
      * Try to understand this...
      */
     bar.increment(1);
-    createSingleEntity(articleRoot, outputFolder, e);
+    await createSingleEntity(articleRoot, outputFolder, e);
   });
 
   bar.stop();
@@ -148,6 +203,7 @@ export const removeExtension = (articlePath: string) =>
 type EntityHierarchy = {
   name: string;
   type: EntityType;
+  uri: string;
 };
 
 export const generateHierarchyFrom = (
@@ -163,6 +219,7 @@ export const generateHierarchyFrom = (
   ].map((e) => ({
     name: removeExtension(e),
     type: extname(e).toLowerCase().includes("md") ? "article" : "folder",
+    uri: removeExtension(generatePrettyPath(e.replace(`${articleRoot}/`, ""))),
   }));
 
 type EntityType = "article" | "folder";
@@ -180,6 +237,8 @@ type Entity = {
   name: string;
   path: string;
   uri: string;
+
+  children?: any[];
 };
 
 export const getEntities = async (
