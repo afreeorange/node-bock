@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Nikhil Anand" />
+    <meta name="description" content="Nikhil's Personal Wiki" />
+    <meta name="theme-color" content="#ffbe0d" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:image" content="/logo512.png" />
+    <meta property="og:site_name" content="Nikhil's Personal Wiki" />
+
+    <link rel="icon" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="og:image" href="/logo512.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/styles.css" />
+
+    <title>{{ entity.name }}</title>
+  </head>
+  <body>
+    <div id="container">
+      <header>
+        <h1>{{ entity.name }}</h1>
+      </header>
+      <nav>
+        <ul>
+          {% for node in entity.hierarchy %}
+          <li>
+            <a href="/{{ node.uri }}" title="{{ node.name }}">
+              {% if node.name === "ROOT" %} 🏠 {% else %} {{ node.name }} {%
+              endif %}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+      <main>
+        {% if entity.type === "article" %}
+        <article>{{ entity.html | safe }}</article>
+
+        {% else %}
+        <h2>Folders {{ entity.children.folders | length }}</h2>
+        <ul>
+          {% for child in entity.children.folders %}
+          <li>
+            📂
+            <a href="/{{ child.uri }}" title="{{ child.name }}">
+              {{ child.name }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+
+        <h2>Articles</h2>
+        <ul>
+          {% for child in entity.children.articles %}
+          <li>
+            📄
+            <a href="/{{ child.uri }}" title="{{ child.name }}">
+              {{ child.name }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+
+        {% endif %}
+      </main>
+      <footer>
+        <ul>
+          <li>Created {{ entity.created }}</li>
+          <li>Modified {{ entity.modified }}</li>
+          <li>{{ entity.sizeInBytes }} bytes</li>
+        </ul>
+      </footer>
+    </div>
+  </body>
+</html>

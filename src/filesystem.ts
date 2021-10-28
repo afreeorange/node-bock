@@ -1,12 +1,12 @@
-import { constants, write } from "fs";
+import { constants } from "fs";
 import { extname } from "path";
 import { red, yellow } from "chalk";
 import { access, mkdir, writeFile, readFile } from "fs/promises";
 
 import { copy } from "fs-extra";
-import fg from "fast-glob";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
+import fg from "fast-glob";
 import nunjucks from "nunjucks";
 
 import {
@@ -38,7 +38,7 @@ export const wordCount = (articleText: string): number =>
 export const renderEntity = async (outputFolder: string, entity: Entity) => {
   await writeFile(
     `${outputFolder}/${entity.uri}/index.html`,
-    nunjucks.render(`${__dirname}/templates/${entity.type}.html`, {
+    nunjucks.render(`${__dirname}/templates/default.html`, {
       entity: entity,
     }),
   );
@@ -100,12 +100,24 @@ export const createSingleEntity = async (
 
     data = {
       ...data,
-      children: children.map((c) => ({
-        name: c.name,
-        type: c.type,
-        path: c.path,
-        uri: c.uri,
-      })),
+      children: {
+        articles: children
+          .filter((c) => c.type === "article")
+          .map((c) => ({
+            name: c.name,
+            type: c.type,
+            path: c.path,
+            uri: c.uri,
+          })),
+        folders: children
+          .filter((c) => c.type === "folder")
+          .map((c) => ({
+            name: c.name,
+            type: c.type,
+            path: c.path,
+            uri: c.uri,
+          })),
+      },
     };
   }
 
@@ -147,6 +159,10 @@ export const copyAssets = async (articleRoot: string, outputFolder: string) => {
       `${articleRoot}/${ASSETS_FOLDER}`,
       `${outputFolder}/${ASSETS_FOLDER}`,
     );
+
+    await copy(`${__dirname}/templates`, `${outputFolder}`, {
+      filter: (src) => !src.endsWith("html"),
+    });
   } catch (error) {
     console.log(`Could not copy assets: ${error}`);
   }
@@ -170,8 +186,8 @@ type EntityHierarchy = {
 export const generateHierarchyFrom = (
   articleRoot: string,
   articlePath: string,
-): EntityHierarchy[] =>
-  [
+): EntityHierarchy[] => {
+  const initialList = [
     ROOT_NODE_NAME,
     ...articlePath
       .replace(articleRoot, "")
@@ -182,6 +198,27 @@ export const generateHierarchyFrom = (
     type: extname(e).toLowerCase().includes("md") ? "article" : "folder",
     uri: removeExtension(generatePrettyPath(e.replace(`${articleRoot}/`, ""))),
   }));
+
+  let finalList: any[] = [
+    {
+      ...initialList[0],
+      uri: "",
+    },
+  ];
+
+  for (let i = 1; i < initialList.length; i++) {
+    finalList.push({
+      name: initialList[i].name,
+      type: initialList[i].type,
+      uri: initialList
+        .slice(1, i + 1)
+        .map((_) => _.uri)
+        .reduce((a, v) => a + "/" + v),
+    });
+  }
+
+  return finalList;
+};
 
 type EntityType = "article" | "folder";
 
