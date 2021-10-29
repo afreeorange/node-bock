@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="author" content="Nikhil Anand" />
     <meta name="description" content="Nikhil's Personal Wiki" />
-    <meta name="theme-color" content="#ffbe0d" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <meta property="og:image" content="/logo512.png" />
@@ -22,7 +21,7 @@
     <title>{{ entity.name }}</title>
   </head>
   <body>
-    <div id="container">
+    <div class="container">
       <header>
         <h1>{{ entity.name }}</h1>
       </header>
@@ -31,8 +30,7 @@
           {% for node in entity.hierarchy %}
           <li>
             <a href="/{{ node.uri }}" title="{{ node.name }}">
-              {% if node.name === "ROOT" %} 🏠 {% else %} {{ node.name }} {%
-              endif %}
+              {% if node.name === "ROOT" %}Home{% else %}{{ node.name }}{% endif %}
             </a>
           </li>
           {% endfor %}
@@ -40,41 +38,44 @@
       </nav>
       <main>
         {% if entity.type === "article" %}
-        <article>{{ entity.html | safe }}</article>
-
+          <article>{{ entity.html | safe }}</article>
         {% else %}
-        <h2>Folders {{ entity.children.folders | length }}</h2>
-        <ul>
-          {% for child in entity.children.folders %}
-          <li>
-            📂
-            <a href="/{{ child.uri }}" title="{{ child.name }}">
-              {{ child.name }}
-            </a>
-          </li>
-          {% endfor %}
-        </ul>
+          {% if entity.readme %}
+            <div class="readme">{{ entity.readme.html | safe }}</div>
+          {% endif %}
 
-        <h2>Articles</h2>
-        <ul>
-          {% for child in entity.children.articles %}
-          <li>
-            📄
-            <a href="/{{ child.uri }}" title="{{ child.name }}">
-              {{ child.name }}
-            </a>
-          </li>
-          {% endfor %}
-        </ul>
+          <h2>Folders <span>{{ entity.children.folders | length }}</span></h2>
+          <ul>
+            {% for child in entity.children.folders %}
+            <li>
+              <a href="/{{ child.uri }}" title="{{ child.name }}">
+                {{ child.name }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
 
+          <h2>Articles <span>{{ entity.children.articles | length }}</span></h2>
+          <ul>
+            {% for child in entity.children.articles %}
+            <li>
+              <a href="/{{ child.uri }}" title="{{ child.name }}">
+                {{ child.name }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
         {% endif %}
       </main>
       <footer>
         <ul>
+          <li>{{ entity.sizeInBytes }} bytes</li>
           <li>Created {{ entity.created }}</li>
           <li>Modified {{ entity.modified }}</li>
-          <li>{{ entity.sizeInBytes }} bytes</li>
         </ul>
+        <p>
+          {{ name }} v{{ version }}
+        </p>
       </footer>
     </div>
   </body>

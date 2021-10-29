@@ -9,8 +9,15 @@
 * [ ] HTML generation
 * [ ] SQL generation job
 * [ ] SQL search JavaScript
+* [ ] Tags
 
 ## Design Notes
+
+Exceptions
+
+* Root is `Home.md`
+* Assets are in `__assets`
+* 
 
 ---
 

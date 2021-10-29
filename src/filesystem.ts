@@ -9,6 +9,7 @@ import cliProgress from "cli-progress";
 import fg from "fast-glob";
 import nunjucks from "nunjucks";
 
+import packageJson from "../package.json";
 import {
   ASSETS_FOLDER,
   ENTITIES_TO_IGNORE,
@@ -17,7 +18,6 @@ import {
   ROOT_NODE_NAME,
   UUID_NAMESPACE,
 } from "./constants";
-
 import parser from "./parser";
 
 export const entityExists = async (
@@ -32,6 +32,20 @@ export const entityExists = async (
   }
 };
 
+/**
+ * Render the Homepage if `Home.md` exists. If it doesn't put up a message.
+ */
+export const maybeRenderHome = async (articleRoot: string) => {
+  let html;
+
+  try {
+    let source = (await readFile(`${articleRoot}/Home.md`)).toString();
+    html = parser.render(source);
+  } catch (e) {
+    html = "(Could not find a <code>Home.md</code>. You should make one!)";
+  }
+};
+
 export const wordCount = (articleText: string): number =>
   articleText.split(" ").length;
 
@@ -40,8 +54,34 @@ export const renderEntity = async (outputFolder: string, entity: Entity) => {
     `${outputFolder}/${entity.uri}/index.html`,
     nunjucks.render(`${__dirname}/templates/default.html`, {
       entity: entity,
+      version: packageJson.version,
+      name: packageJson.name,
     }),
   );
+};
+
+export const maybeReadme = async (articleRoot: string, entity: Entity) => {
+  let ret: {
+    source: string;
+    html: string;
+  } | null;
+
+  try {
+    let source = (
+      await readFile(`${articleRoot}/${entity.path}/README.md`)
+    ).toString();
+
+    let html = parser.render(source);
+
+    ret = {
+      source,
+      html,
+    };
+  } catch (e) {
+    ret = null;
+  }
+
+  return ret;
 };
 
 export const createSingleEntity = async (
@@ -96,7 +136,7 @@ export const createSingleEntity = async (
       revisions: [],
     };
   } else {
-    const children = await getEntities(articleRoot, path, 1);
+    const children = Object.values(await getEntities(articleRoot, path, 1));
 
     data = {
       ...data,
@@ -118,6 +158,7 @@ export const createSingleEntity = async (
             uri: c.uri,
           })),
       },
+      readme: await maybeReadme(articleRoot, entity),
     };
   }
 
@@ -138,7 +179,7 @@ export const createEntities = async (
   bar.start(listOfEntities.length, 0);
 
   await Promise.all([
-    listOfEntities.map(async (e) => {
+    listOfEntities.map(async (entity) => {
       /**
        * TODO: Why does this work and doing this at the end not?
        * https://github.com/npkgz/cli-progress/issues/104
@@ -146,7 +187,7 @@ export const createEntities = async (
        * Try to understand this...
        */
       bar.increment(1);
-      await createSingleEntity(articleRoot, outputFolder, e);
+      await createSingleEntity(articleRoot, outputFolder, entity);
     }),
   ]);
 
@@ -176,12 +217,6 @@ export const generatePrettyPath = (entityPath: string) =>
 
 export const removeExtension = (articlePath: string) =>
   articlePath.replace(extname(articlePath), "");
-
-type EntityHierarchy = {
-  name: string;
-  type: EntityType;
-  uri: string;
-};
 
 export const generateHierarchyFrom = (
   articleRoot: string,
@@ -220,37 +255,14 @@ export const generateHierarchyFrom = (
   return finalList;
 };
 
-type EntityType = "article" | "folder";
-
-type Entity = {
-  created: Date;
-  hierarchy: EntityHierarchy[];
-  id: string;
-  modified: Date;
-  type: EntityType;
-
-  sizeInBytes: number;
-
-  // How to address an entity. Title, path on disk (relative), URI
-  name: string;
-  path: string;
-  uri: string;
-
-  children?: any[];
-  source?: string;
-  wordCount?: number;
-  excerpt?: string;
-  html?: string;
-  uncommitted?: boolean;
-  revisions?: string[];
-};
-
 export const getEntities = async (
   articleRoot: string,
   prefix: string = "",
   maxDepth: number = MAX_DEPTH,
-): Promise<Entity[]> => {
-  return (
+): Promise<Record<string, Entity>> => {
+  let ret: Record<string, Entity> = {};
+
+  (
     await fg(`${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`, {
       deep: maxDepth,
       followSymbolicLinks: false,
@@ -265,19 +277,23 @@ export const getEntities = async (
         (e.dirent.isFile() || e.dirent.isDirectory()) &&
         !e.path.includes(ASSETS_FOLDER),
     )
-    .map((e) => ({
-      id: generateIdFrom(articleRoot, e.path),
-      created: e.stats!.ctime,
-      hierarchy: generateHierarchyFrom(articleRoot, e.path),
-      modified: e.stats!.mtime,
-      type: e.dirent.isFile() ? "article" : "folder",
+    .map((e) => {
+      let path = e.path.replace(`${articleRoot}/`, "");
 
-      name: removeExtension(e.name),
-      uri: removeExtension(
-        generatePrettyPath(e.path.replace(`${articleRoot}/`, "")),
-      ),
-      path: e.path.replace(`${articleRoot}/`, ""),
+      ret[path] = {
+        id: generateIdFrom(articleRoot, e.path),
+        created: e.stats!.ctime,
+        hierarchy: generateHierarchyFrom(articleRoot, e.path),
+        modified: e.stats!.mtime,
+        type: e.dirent.isFile() ? "article" : "folder",
+        sizeInBytes: e.stats!.size,
+        name: removeExtension(e.name),
+        uri: removeExtension(
+          generatePrettyPath(e.path.replace(`${articleRoot}/`, "")),
+        ),
+        path: e.path.replace(`${articleRoot}/`, ""),
+      };
+    });
 
-      sizeInBytes: e.stats!.size,
-    }));
+  return ret;
 };

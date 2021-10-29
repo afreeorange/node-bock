@@ -1,36 +1,47 @@
 #!/usr/bin/env node
 
 import { writeFile } from "fs/promises";
+import chokidar from "chokidar";
+import chalk from "chalk";
+
 import CLI from "./cli";
-import { createEntities, getEntities, copyAssets } from "./filesystem";
+import {
+  createEntities,
+  createSingleEntity,
+  getEntities,
+  copyAssets,
+} from "./filesystem";
 
 (async () => {
   CLI.parse(process.argv);
   const { articleRoot, outputFolder } = CLI.opts();
 
-  const listOfEntities = await getEntities(articleRoot);
+  const entities = await getEntities(articleRoot);
+  const listOfEntities = Object.values(entities);
   await createEntities(articleRoot, outputFolder, listOfEntities);
   await copyAssets(articleRoot, outputFolder);
 
-  // await writeFile(
-  //   "/Users/nikhil/Downloads/out.json",
-  //   JSON.stringify(listOfEntities, null, 2),
-  // );
+  // Write out all the entities
+  await writeFile(
+    `${outputFolder}/entities.json`,
+    JSON.stringify(entities, null, 2),
+  );
 
   console.log(`Finished writing ${listOfEntities.length} entities`);
   console.log(`Found ${listOfEntities.length} entities in ${articleRoot}`);
   console.log(`Output folder is ${outputFolder}`);
 
-  // listOfEntities.map((e) => console.log(e));
-})();
+  console.log(`Watching ${articleRoot} for changes`);
+  const watcher = chokidar.watch([`${articleRoot}/**/*.md`], {
+    persistent: true,
+  });
 
-/**
- * Food/index.json
- * Food/Thai_Curry_Experiments/index.json
- * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/index.json
- * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/revisions/asjahsd718273kqbwfaki011.json
- * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/revisions/asjahsd718273kqbwfaki011.json
- * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/revisions/asjahsd718273kqbwfaki011.json
- * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/revisions/asjahsd718273kqbwfaki011.json
- * Food/Thai_Curry_Experiments/Thai_Green_Curry_Chicken_-_Instant_Pot/revisions/asjahsd718273kqbwfaki011.json
- */
+  watcher.on("change", async (path) => {
+    console.log(chalk.gray(`${chalk.white(path)} changed: re-rendering...`));
+    await createSingleEntity(
+      articleRoot,
+      outputFolder,
+      entities[path.replace(`${articleRoot}/`, "")],
+    );
+  });
+})();
