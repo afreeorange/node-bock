@@ -1,4 +1,4 @@
-import { constants } from "fs";
+import { constants, write } from "fs";
 import { extname } from "path";
 import { red, yellow } from "chalk";
 import { access, mkdir, writeFile, readFile } from "fs/promises";
@@ -13,6 +13,7 @@ import packageJson from "../package.json";
 import {
   ASSETS_FOLDER,
   ENTITIES_TO_IGNORE,
+  HOME_PAGE_DOCOUMENT,
   JSON_PADDING,
   MAX_DEPTH,
   ROOT_NODE_NAME,
@@ -32,18 +33,28 @@ export const entityExists = async (
   }
 };
 
-/**
- * Render the Homepage if `Home.md` exists. If it doesn't put up a message.
- */
-export const maybeRenderHome = async (articleRoot: string) => {
+export const renderHome = async (articleRoot: string, outputFolder: string) => {
   let html;
+  let source;
 
   try {
-    let source = (await readFile(`${articleRoot}/Home.md`)).toString();
-    html = parser.render(source);
+    source = (
+      await readFile(`${articleRoot}/${HOME_PAGE_DOCOUMENT}`)
+    ).toString();
   } catch (e) {
-    html = "(Could not find a <code>Home.md</code>. You should make one!)";
+    source = `(Could not find a <code>${HOME_PAGE_DOCOUMENT}</code>. You should make one!)`;
   }
+
+  html = parser.render(source);
+
+  await writeFile(
+    `${outputFolder}/index.html`,
+    nunjucks.render(`${__dirname}/templates/hello.html`, {
+      html,
+      version: packageJson.version,
+      name: packageJson.name,
+    }),
+  );
 };
 
 export const wordCount = (articleText: string): number =>
@@ -52,7 +63,7 @@ export const wordCount = (articleText: string): number =>
 export const renderEntity = async (outputFolder: string, entity: Entity) => {
   await writeFile(
     `${outputFolder}/${entity.uri}/index.html`,
-    nunjucks.render(`${__dirname}/templates/default.html`, {
+    nunjucks.render(`${__dirname}/templates/entity.html`, {
       entity: entity,
       version: packageJson.version,
       name: packageJson.name,

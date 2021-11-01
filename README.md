@@ -4,12 +4,17 @@
 
 * [ ] Check if git repo
 * [ ] Check output folder
+* [ ] Home page
 * [ ] remove trailing slashes
 * [ ] LR local server
 * [ ] HTML generation
 * [ ] SQL generation job
 * [ ] SQL search JavaScript
-* [ ] Tags
+* [ ] Tags?
+* [ ] Stats
+* [ ] Latest entries
+* [ ] List of articles
+* [ ] RAW page
 
 ## Design Notes
 
@@ -17,7 +22,9 @@ Exceptions
 
 * Root is `Home.md`
 * Assets are in `__assets`
-* 
+* `/articles` is special
+* `/search` is special
+* Can add a `README.md` to each folder except root for description
 
 ---
 

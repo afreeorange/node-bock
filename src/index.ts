@@ -10,6 +10,7 @@ import {
   createSingleEntity,
   getEntities,
   copyAssets,
+  renderHome,
 } from "./filesystem";
 
 (async () => {
@@ -31,6 +32,9 @@ import {
 
   await copyAssets(articleRoot, outputFolder);
   console.log(`Copied static assets`);
+
+  await renderHome(articleRoot, outputFolder);
+  console.log(`Rendered Homepage`);
 
   if (watch) {
     console.log(`Watching ${articleRoot} for changes`);

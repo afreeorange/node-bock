@@ -30,7 +30,7 @@
           {% for node in entity.hierarchy %}
           <li>
             <a href="/{{ node.uri }}" title="{{ node.name }}">
-              {% if node.name === "ROOT" %}Home{% else %}{{ node.name }}{% endif %}
+              {%- if node.name === "ROOT" -%}Home{%- else -%}{{ node.name }}{%- endif -%}
             </a>
           </li>
           {% endfor %}
@@ -72,10 +72,8 @@
           <li>{{ entity.sizeInBytes }} bytes</li>
           <li>Created {{ entity.created }}</li>
           <li>Modified {{ entity.modified }}</li>
+          <li>{{ name }} v{{ version }}</li>
         </ul>
-        <p>
-          {{ name }} v{{ version }}
-        </p>
       </footer>
     </div>
   </body>
