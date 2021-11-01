@@ -94,7 +94,6 @@ h2 > span + span {
 
 nav {
   font-size: small;
-  margin-bottom: 4em;
   color: #ccc;
 }
 nav ul {
@@ -105,16 +104,22 @@ nav ul {
 nav ul li {
   display: inline-block;
 }
-nav ul li:not(:last-child) {
+main nav ul li:not(:last-child) {
   margin-right: 0.5em;
-}
-nav ul li:not(:last-child)::after {
-  content: "/";
-  margin-left: 0.6em;
 }
 nav a {
   color: gray;
   text-decoration-color: #ccc;
+}
+header nav {
+  margin-top: 2em;
+}
+header nav ul li:not(:last-child) {
+  margin-right: 1.5em;
+}
+main nav ul li:not(:last-child)::after {
+  content: "/";
+  margin-left: 0.6em;
 }
 
 footer {

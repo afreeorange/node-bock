@@ -13,7 +13,7 @@ import packageJson from "../package.json";
 import {
   ASSETS_FOLDER,
   ENTITIES_TO_IGNORE,
-  HOME_PAGE_DOCOUMENT,
+  HOME_PAGE_DOCUMENT,
   JSON_PADDING,
   MAX_DEPTH,
   ROOT_NODE_NAME,
@@ -33,27 +33,79 @@ export const entityExists = async (
   }
 };
 
-export const renderHome = async (articleRoot: string, outputFolder: string) => {
+export const renderArticles = async (
+  outputFolder: string,
+  listOfEntities: Entity[],
+) => {
+  await mkdir(`${outputFolder}/articles`);
+  await writeFile(
+    `${outputFolder}/articles/index.html`,
+    nunjucks.render(`${__dirname}/templates/articles.html`, {
+      articles: listOfEntities,
+      version: packageJson.version,
+      name: packageJson.name,
+    }),
+  );
+};
+
+export const renderHome = async (
+  articleRoot: string,
+  outputFolder: string,
+  entities: Record<string, Entity[]>,
+) => {
   let html;
   let source;
 
-  try {
+  if (Object.keys(entities).includes("Hello.md")) {
     source = (
-      await readFile(`${articleRoot}/${HOME_PAGE_DOCOUMENT}`)
+      await readFile(`${articleRoot}/${HOME_PAGE_DOCUMENT}`)
     ).toString();
-  } catch (e) {
-    source = `(Could not find a <code>${HOME_PAGE_DOCOUMENT}</code>. You should make one!)`;
+  } else {
+    source = `(Could not find a <code>${HOME_PAGE_DOCUMENT}</code>. You should make one!)`;
   }
 
   html = parser.render(source);
 
+  const entity = {
+    created: new Date(),
+    hierarchy: [],
+    id: uuidv5(`/${HOME_PAGE_DOCUMENT}`, UUID_NAMESPACE),
+    modified: new Date(),
+    name: "Hello",
+    path: "Hello.md",
+    sizeInBytes: 0,
+    type: "article",
+    uri: "/Hello",
+    source,
+    wordCount: wordCount(source),
+    excerpt: "",
+    html,
+    uncommitted: false,
+    revisions: [],
+  };
+
   await writeFile(
-    `${outputFolder}/index.html`,
-    nunjucks.render(`${__dirname}/templates/hello.html`, {
-      html,
+    `${outputFolder}/Hello/index.html`,
+    nunjucks.render(`${__dirname}/templates/entity.html`, {
+      entity,
       version: packageJson.version,
       name: packageJson.name,
     }),
+  );
+
+  await writeFile(
+    `${outputFolder}/index.html`,
+    `
+  <html>
+    <head>
+    <meta http-equiv="refresh" content="0;url=/Hello" />
+    <title>Page Moved</title>
+    </head>
+    <body>
+      Click <a href="/Hello">here</a> if you are not redirected...
+    </body>
+  </html>
+  `,
   );
 };
 

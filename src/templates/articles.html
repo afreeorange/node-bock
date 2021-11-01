@@ -1,1 +1,54 @@
-<h1>Articles</h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Nikhil Anand" />
+    <meta name="description" content="Nikhil's Personal Wiki" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:image" content="/logo512.png" />
+    <meta property="og:site_name" content="Nikhil's Personal Wiki" />
+
+    <link rel="icon" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="og:image" href="/logo512.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/styles.css" />
+
+    <title>List of Articles</title>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <nav>
+          <ul>
+            <li><a href="/search">Search</a></li>
+            <li><a href="/Hello">Home</a></li>
+            <li><a href="/articles">Articles</a></li>
+            <li><a href="/random">Random</a></li>
+          </ul>
+        </nav>
+        <h1>Articles <span>{{ articles | length }}</span></h1>
+      </header>
+      <main>
+        <ul>
+          {% for article in articles %}
+          <li>
+            <a href="/{{ article.uri }}" title="Read {{ article.name }}">
+              {{ article.path | replace(".md", "") | replace("/", " / ") }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </main>
+      <footer>
+        <ul>
+          <li>{{ name }} v{{ version }}</li>
+        </ul>
+      </footer>
+    </div>
+  </body>
+</html>

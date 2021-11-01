@@ -11,6 +11,7 @@ import {
   getEntities,
   copyAssets,
   renderHome,
+  renderArticles,
 } from "./filesystem";
 
 (async () => {
@@ -33,8 +34,11 @@ import {
   await copyAssets(articleRoot, outputFolder);
   console.log(`Copied static assets`);
 
-  await renderHome(articleRoot, outputFolder);
+  await renderHome(articleRoot, outputFolder, entities);
   console.log(`Rendered Homepage`);
+
+  await renderArticles(outputFolder, listOfEntities);
+  console.log(`Rendered Articles`);
 
   if (watch) {
     console.log(`Watching ${articleRoot} for changes`);
