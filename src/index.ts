@@ -2,7 +2,6 @@
 
 import { writeFile } from "fs/promises";
 import chokidar from "chokidar";
-import chalk from "chalk";
 
 import CLI from "./cli";
 import {
@@ -17,27 +16,33 @@ import {
 (async () => {
   CLI.parse(process.argv);
   const { articleRoot, outputFolder, watch } = CLI.opts();
-
   const entities = await getEntities(articleRoot);
-  const listOfEntities = Object.values(entities);
+  const bock: Bock = {
+    articleRoot,
+    outputFolder,
+    entities,
+    listOfEntities: Object.values(entities),
+    listOfPaths: Object.keys(entities),
+  };
+
   await writeFile(
-    `${outputFolder}/entities.json`,
+    `${bock.outputFolder}/entities.json`,
     JSON.stringify(entities, null, 2),
   );
 
-  console.log(`Found ${listOfEntities.length} entities in ${articleRoot}`);
+  console.log(`Found ${bock.listOfEntities.length} entities in ${articleRoot}`);
   console.log(`Output folder is ${outputFolder}`);
 
-  await createEntities(articleRoot, outputFolder, listOfEntities);
-  console.log(`Finished writing ${listOfEntities.length} entities`);
+  await createEntities(bock);
+  console.log(`Finished writing ${bock.listOfEntities.length} entities`);
 
-  await copyAssets(articleRoot, outputFolder);
+  await copyAssets(bock);
   console.log(`Copied static assets`);
 
-  await renderHome(articleRoot, outputFolder, entities);
+  await renderHome(bock);
   console.log(`Rendered Homepage`);
 
-  await renderArticles(outputFolder, listOfEntities);
+  await renderArticles(bock);
   console.log(`Rendered Articles`);
 
   if (watch) {
@@ -47,7 +52,6 @@ import {
     });
 
     watcher.on("change", async (path) => {
-      console.log(chalk.gray(`${chalk.white(path)} changed: re-rendering...`));
       await createSingleEntity(
         articleRoot,
         outputFolder,

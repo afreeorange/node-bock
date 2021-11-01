@@ -46,3 +46,11 @@ type Article = Entity & {
   uncommitted?: boolean;
   revisions?: string[];
 };
+
+type Bock = {
+  articleRoot: string;
+  outputFolder: string;
+  entities: Record<string, Entity>;
+  listOfEntities: Entity[];
+  listOfPaths: string[];
+};

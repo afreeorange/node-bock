@@ -1,7 +1,5 @@
-import { constants, write } from "fs";
 import { extname } from "path";
-import { red, yellow } from "chalk";
-import { access, mkdir, writeFile, readFile } from "fs/promises";
+import { mkdir, writeFile, readFile } from "fs/promises";
 
 import { copy } from "fs-extra";
 import { v5 as uuidv5 } from "uuid";
@@ -21,23 +19,18 @@ import {
 } from "./constants";
 import parser from "./parser";
 
-export const entityExists = async (
-  outputFolder: string,
-  outputEntity: EntityHierarchy,
-): Promise<boolean> => {
+export const renderArticles = async ({
+  outputFolder,
+  listOfEntities,
+}: Bock) => {
   try {
-    await access(`${outputFolder}/${outputEntity}`, constants.R_OK);
-    return true;
-  } catch {
-    return false;
+    await mkdir(`${outputFolder}/articles`);
+  } catch (error) {
+    if (!(error as Error).message.includes("EEXIST")) {
+      console.log(`Error creating articles folder: ${error}`);
+    }
   }
-};
 
-export const renderArticles = async (
-  outputFolder: string,
-  listOfEntities: Entity[],
-) => {
-  await mkdir(`${outputFolder}/articles`);
   await writeFile(
     `${outputFolder}/articles/index.html`,
     nunjucks.render(`${__dirname}/templates/articles.html`, {
@@ -48,11 +41,11 @@ export const renderArticles = async (
   );
 };
 
-export const renderHome = async (
-  articleRoot: string,
-  outputFolder: string,
-  entities: Record<string, Entity[]>,
-) => {
+export const renderHome = async ({
+  entities,
+  articleRoot,
+  outputFolder,
+}: Bock) => {
   let html;
   let source;
 
@@ -170,7 +163,7 @@ export const createSingleEntity = async (
     await mkdir(entityToMake, { recursive: true });
   } catch (error) {
     if (!(error as Error).message.includes("EEXIST")) {
-      console.error(red(`Problem creating ${entityToMake}: ${error}`));
+      console.error(`Problem creating ${entityToMake}: ${error}`);
     }
   }
 
@@ -233,11 +226,11 @@ export const createSingleEntity = async (
   await renderEntity(outputFolder, data);
 };
 
-export const createEntities = async (
-  articleRoot: string,
-  outputFolder: string,
-  listOfEntities: Entity[],
-): Promise<void> => {
+export const createEntities = async ({
+  articleRoot,
+  outputFolder,
+  listOfEntities,
+}: Bock): Promise<void> => {
   const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
   bar.start(listOfEntities.length, 0);
 
@@ -257,7 +250,7 @@ export const createEntities = async (
   bar.stop();
 };
 
-export const copyAssets = async (articleRoot: string, outputFolder: string) => {
+export const copyAssets = async ({ articleRoot, outputFolder }: Bock) => {
   try {
     await copy(
       `${articleRoot}/${ASSETS_FOLDER}`,
