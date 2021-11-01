@@ -132,3 +132,28 @@ footer ul {
   margin: 0;
   padding: 0;
 }
+
+.articles main ul {
+  margin: var(--root-spacing) 0;
+  padding: 0
+}
+
+.articles main ul a {
+  color: var(--color-black);
+  text-decoration: none
+}
+
+.articles main ul a:hover {
+  color: var(--color-highlight);
+  text-decoration: underline
+}
+
+.articles main ul li {
+  padding: .25em;
+  list-style-type: none
+}
+
+.articles main ul li:nth-child(2n) {
+  border-top: 1px dotted var(--color-grey-light);
+  border-bottom: 1px dotted var(--color-grey-light)
+}
