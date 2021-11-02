@@ -146,7 +146,7 @@ main nav ul li:not(:last-child) a::after {
   width: 1.125em;
   height: 1.125em;
   vertical-align: middle;
-  content: "a";
+  content: "";
   display: inline-block;
   margin-left: 0.5em;
   background-color: #ccc;
@@ -278,4 +278,8 @@ header nav ul li a[href*="/raw"] {
 header nav ul li a[href*="/revisions"] {
   -webkit-mask-image: url(/img/revisions.svg);
   mask-image: url(/img/revisions.svg);
+}
+
+.container.raw {
+  overflow-x: hidden;
 }

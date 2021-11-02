@@ -12,6 +12,7 @@ import {
   renderHome,
   renderArticles,
 } from "./filesystem";
+import chalk from "chalk";
 
 (async () => {
   CLI.parse(process.argv);
@@ -52,11 +53,12 @@ import {
     });
 
     watcher.on("change", async (path) => {
-      await createSingleEntity(
-        articleRoot,
-        outputFolder,
-        entities[path.replace(`${articleRoot}/`, "")],
+      let _path = path.replace(`${articleRoot}/`, "");
+
+      console.log(
+        chalk.yellow(`${chalk.green(_path)} changed... re-rendering`),
       );
+      await createSingleEntity(articleRoot, outputFolder, entities[_path]);
     });
   }
 })();

@@ -5,9 +5,9 @@ import { copy } from "fs-extra";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
 import fg from "fast-glob";
-import nunjucks from "nunjucks";
 import highlight from "highlight.js";
 
+import { renderer } from "./renderer";
 import packageJson from "../package.json";
 import {
   ASSETS_FOLDER,
@@ -19,7 +19,6 @@ import {
   UUID_NAMESPACE,
 } from "./constants";
 import parser from "./parser";
-import e from "express";
 
 export const renderArticles = async ({
   outputFolder,
@@ -35,10 +34,11 @@ export const renderArticles = async ({
 
   await writeFile(
     `${outputFolder}/articles/index.html`,
-    nunjucks.render(`${__dirname}/templates/articles.html`, {
+    renderer.render(`${__dirname}/templates/articles.html`, {
       articles: listOfEntities,
       version: packageJson.version,
       name: packageJson.name,
+      type: "articles",
     }),
   );
 };
@@ -81,10 +81,11 @@ export const renderHome = async ({
 
   await writeFile(
     `${outputFolder}/Hello/index.html`,
-    nunjucks.render(`${__dirname}/templates/entity.html`, {
+    renderer.render(`${__dirname}/templates/entity.html`, {
       entity,
       version: packageJson.version,
       name: packageJson.name,
+      type: entity.type,
     }),
   );
 
@@ -94,10 +95,10 @@ export const renderHome = async ({
   <html>
     <head>
     <meta http-equiv="refresh" content="0;url=/Hello" />
-    <title>Page Moved</title>
+    <title>Bock</title>
     </head>
     <body>
-      Click <a href="/Hello">here</a> if you are not redirected...
+      <a href="/Hello">Click here</a> if you are not redirected&hellip;
     </body>
   </html>
   `,
@@ -110,10 +111,11 @@ export const wordCount = (articleText: string): number =>
 export const renderEntity = async (outputFolder: string, entity: Entity) => {
   await writeFile(
     `${outputFolder}/${entity.uri}/index.html`,
-    nunjucks.render(`${__dirname}/templates/entity.html`, {
-      entity: entity,
+    renderer.render(`${__dirname}/templates/entity.html`, {
+      entity,
       version: packageJson.version,
       name: packageJson.name,
+      type: entity.type,
     }),
   );
 };
@@ -156,9 +158,15 @@ export const renderRawArticle = async (
 
   await writeFile(
     `${outputFolder}/${article.uri}/raw/index.html`,
-    highlight.highlight(article.source!, {
-      language: "markdown",
-    }).value,
+    renderer.render(`${__dirname}/templates/raw.html`, {
+      entity: article,
+      raw: highlight.highlight(article.source!, {
+        language: "markdown",
+      }).value,
+      version: packageJson.version,
+      name: packageJson.name,
+      type: "raw",
+    }),
   );
 };
 
@@ -258,22 +266,24 @@ export const createEntities = async ({
   listOfEntities,
 }: Bock): Promise<void> => {
   const bar = new cliProgress.Bar({
-    format: "[{bar}] {percentage}% | {value}/{total} | Processing: {entity}",
+    format: "[{bar}] {value} of {total} ({entity})",
     synchronousUpdate: false,
   });
 
   bar.start(listOfEntities.length, 0, { entity: "N/A" });
 
-  await Promise.all(
-    listOfEntities.map(async (entity, index) => {
-      // This doesn't work as expected...
-      bar.update(index + 1, {
-        entity: entity.name,
-      });
+  for await (const e of listOfEntities) {
+    await createSingleEntity(articleRoot, outputFolder, e);
+    bar.increment({
+      entity: e.name,
+    });
+  }
 
-      await createSingleEntity(articleRoot, outputFolder, entity);
-    }),
-  );
+  // await Promise.all(
+  //   listOfEntities.map(async (e) => {
+  //     await createSingleEntity(articleRoot, outputFolder, e);
+  //   }),
+  // );
 
   bar.stop();
 };

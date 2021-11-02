@@ -79,7 +79,7 @@
       <footer>
         <ul>
           {% if entity.sizeInBytes != 0 %}
-          <li>{{ entity.sizeInBytes }} bytes</li>
+          <li>{{ entity.sizeInBytes | numeral("0,0") }} bytes</li>
           {% endif %}
           <li>Created {{ entity.created }}</li>
           <li>Modified {{ entity.modified }}</li>

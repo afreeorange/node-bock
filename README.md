@@ -15,8 +15,13 @@
 * [ ] Latest entries
 * [ ] List of articles
 * [ ] RAW page
+* [ ] Revisions page
+* [ ] Compare page
+* [ ] Search Page
 
 ## Design Notes
+
+To Templates: you will have a `type` 
 
 Exceptions
 

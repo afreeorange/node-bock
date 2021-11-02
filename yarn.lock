@@ -172,6 +172,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/numeral@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@types/numeral/-/numeral-2.0.2.tgz#8ea2c4f4e64c0cc948ad7da375f6f827778a7912"
+  integrity sha512-A8F30k2gYJ/6e07spSCPpkuZu79LCnkPTvqmIWQzNGcrzwFKpVOydG41lNt5wZXjSI149qjyzC2L1+F2PD/NUA==
+
 "@types/nunjucks@^3.2.0":
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/@types/nunjucks/-/nunjucks-3.2.0.tgz#2303629c91cdd39de103af979046d4a8590351e4"
@@ -1496,6 +1501,7 @@ node-pre-gyp@^0.13.0:
 nodegit@^0.27.0:
   version "0.27.0"
   resolved "https://registry.yarnpkg.com/nodegit/-/nodegit-0.27.0.tgz#4e8cc236f60e1c97324a5acff99056fe116a6ebe"
+  integrity sha512-E9K4gPjWiA0b3Tx5lfWCzG7Cvodi2idl3V5UD2fZrOrHikIfrN7Fc2kWLtMUqqomyoToYJLeIC8IV7xb1CYRLA==
   dependencies:
     fs-extra "^7.0.0"
     got "^10.7.0"
@@ -1590,6 +1596,11 @@ npm-packlist@^1.1.6:
 number-is-nan@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
+
+numeral@^2.0.6:
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/numeral/-/numeral-2.0.6.tgz#4ad080936d443c2561aed9f2197efffe25f4e506"
+  integrity sha1-StCAk21EPCVhrtnyGX7//iX05QY=
 
 nunjucks@^3.2.3:
   version "3.2.3"
