@@ -92,34 +92,70 @@ h2 > span + span {
   }
 }
 
-nav {
-  font-size: small;
-  color: #ccc;
+main h1 {
+  color: red;
 }
-nav ul {
+main nav {
+  font-size: small;
+  margin-top: 1em;
+}
+main nav a {
+  color: gray;
+  text-decoration-color: #ccc;
+}
+main nav ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
-nav ul li {
+main nav ul li {
   display: inline-block;
 }
 main nav ul li:not(:last-child) {
   margin-right: 0.5em;
 }
-nav a {
-  color: gray;
-  text-decoration-color: #ccc;
+main nav ul li a[data-entity-type]::before {
+  width: 1.125em;
+  height: 1.125em;
+  vertical-align: middle;
+  content: "";
+  display: inline-block;
+  margin-right: 0.5em;
+  background-color: gray;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
-header nav {
-  margin-top: 2em;
+main nav ul li a[data-entity-type]:hover::before {
+  background-color: red;
 }
-header nav ul li:not(:last-child) {
-  margin-right: 1.5em;
+main nav ul li a[data-entity-type="folder"]::before {
+  -webkit-mask-image: url(/img/folder.svg);
+  mask-image: url(/img/folder.svg);
 }
-main nav ul li:not(:last-child)::after {
-  content: "/";
-  margin-left: 0.6em;
+main nav ul li a[data-entity-type="article"]::before {
+  -webkit-mask-image: url(/img/article.svg);
+  mask-image: url(/img/article.svg);
+}
+main nav ul li a[href="/ROOT"]::before {
+  -webkit-mask-image: url(/img/root.svg);
+  mask-image: url(/img/root.svg);
+}
+main nav ul li:not(:last-child) a::after {
+  width: 1.125em;
+  height: 1.125em;
+  vertical-align: middle;
+  content: "a";
+  display: inline-block;
+  margin-left: 0.5em;
+  background-color: #ccc;
+  -webkit-mask-image: url(/img/chevron.svg);
+  mask-image: url(/img/chevron.svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 footer {
@@ -132,28 +168,114 @@ footer ul {
   margin: 0;
   padding: 0;
 }
+footer a {
+  color: gray;
+  text-decoration: none;
+  border-bottom: 1px dotted #ccc;
+}
+footer li a::before {
+  width: 1em;
+  height: 1em;
+  content: "";
+  display: inline-block;
+
+  background-color: gray;
+  vertical-align: middle;
+  margin-right: 0.5em;
+
+  -webkit-mask-image: url(/img/bock.svg);
+  mask-image: url(/img/bock.svg);
+}
 
 .articles main ul {
   margin: var(--root-spacing) 0;
-  padding: 0
+  padding: 0;
 }
 
 .articles main ul a {
   color: var(--color-black);
-  text-decoration: none
+  text-decoration: none;
 }
 
 .articles main ul a:hover {
   color: var(--color-highlight);
-  text-decoration: underline
+  text-decoration: underline;
 }
 
 .articles main ul li {
-  padding: .25em;
-  list-style-type: none
+  padding: 0.25em;
+  list-style-type: none;
 }
 
 .articles main ul li:nth-child(2n) {
   border-top: 1px dotted var(--color-grey-light);
-  border-bottom: 1px dotted var(--color-grey-light)
+  border-bottom: 1px dotted var(--color-grey-light);
+}
+
+.articles main form[role="search"] input {
+  border-radius: 0.25em;
+  border-radius: var(--border-radius);
+  border: 0;
+  font-size: large;
+  padding: 0.25em;
+  border: 1px solid #ccc;
+  border: 1px solid var(--color-grey-light);
+  width: 100%;
+}
+
+header nav {
+  margin-top: 2em;
+  font-size: smaller;
+}
+header nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+header nav ul li {
+  display: inline-block;
+}
+header nav ul li:not(:last-child) {
+  margin-right: 1.5em;
+}
+header nav ul li a {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  background-color: #ccc;
+
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+header nav ul li a:hover {
+  background-color: red;
+  transition: background-color 0.7s;
+}
+header nav ul li span {
+  display: none;
+}
+
+header nav ul li a[href="/search"] {
+  -webkit-mask-image: url(/img/search.svg);
+  mask-image: url(/img/search.svg);
+}
+header nav ul li a[href="/Hello"] {
+  -webkit-mask-image: url(/img/home.svg);
+  mask-image: url(/img/home.svg);
+}
+header nav ul li a[href="/random"] {
+  -webkit-mask-image: url(/img/random.svg);
+  mask-image: url(/img/random.svg);
+}
+header nav ul li a[href="/articles"] {
+  -webkit-mask-image: url(/img/articles.svg);
+  mask-image: url(/img/articles.svg);
+}
+header nav ul li a[href*="/raw"] {
+  -webkit-mask-image: url(/img/raw.svg);
+  mask-image: url(/img/raw.svg);
+}
+header nav ul li a[href*="/revisions"] {
+  -webkit-mask-image: url(/img/revisions.svg);
+  mask-image: url(/img/revisions.svg);
 }

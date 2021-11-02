@@ -24,6 +24,8 @@ Exceptions
 * Assets are in `__assets`
 * `/articles` is special
 * `/search` is special
+* `/random` is special
+* `/ROOT` is special
 * Can add a `README.md` to each folder except root for description
 
 ---

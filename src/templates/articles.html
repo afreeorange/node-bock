@@ -9,12 +9,12 @@
     <meta name="description" content="Nikhil's Personal Wiki" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta property="og:image" content="/logo512.png" />
+    <meta property="og:image" content="/img/logo512.png" />
     <meta property="og:site_name" content="Nikhil's Personal Wiki" />
 
-    <link rel="icon" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/logo192.png" />
-    <link rel="og:image" href="/logo512.png" />
+    <link rel="icon" href="/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/img/logo192.png" />
+    <link rel="og:image" href="/img/logo512.png" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="stylesheet" href="/styles.css" />
 
@@ -25,21 +25,30 @@
       <header>
         <nav>
           <ul>
-            <li><a href="/search">Search</a></li>
-            <li><a href="/Hello">Home</a></li>
-            <li><a href="/articles">Articles</a></li>
-            <li><a href="/random">Random</a></li>
+            <li>
+              <a href="/search"><span>Search</span></a>
+            </li>
+            <li>
+              <a href="/Hello"><span>Home</span></a>
+            </li>
+            <li>
+              <a href="/articles"><span>Articles</span></a>
+            </li>
+            <li>
+              <a href="/random"><span>Random</span></a>
+            </li>
           </ul>
         </nav>
         <h1>Articles <span>{{ articles | length }}</span></h1>
       </header>
       <main>
-        
+        <form role="search"><input type="search" /></form>
         <ul>
           {% for article in articles %}
           <li>
             <a href="/{{ article.uri }}" title="Read {{ article.name }}">
-              {{ article.path | replace(".md", "") | replace("/", " / ") }}
+              {{ article.path | replace(".md", "") | replace("/", " &rarr; ") |
+              safe }}
             </a>
           </li>
           {% endfor %}
@@ -47,7 +56,13 @@
       </main>
       <footer>
         <ul>
-          <li>{{ name }} v{{ version }}</li>
+          <li>
+            <a
+              href="https://github.com/afreeorange/bock"
+              title="Link to this project on Github"
+              >{{ name }} v{{ version }}</a
+            >
+          </li>
         </ul>
       </footer>
     </div>
