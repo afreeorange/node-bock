@@ -6,6 +6,7 @@ import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
 import fg from "fast-glob";
 import nunjucks from "nunjucks";
+import highlight from "highlight.js";
 
 import packageJson from "../package.json";
 import {
@@ -141,6 +142,26 @@ export const maybeReadme = async (articleRoot: string, entity: Entity) => {
   return ret;
 };
 
+export const renderRawArticle = async (
+  outputFolder: string,
+  article: Article,
+) => {
+  try {
+    await mkdir(`${outputFolder}/${article.uri}/raw`);
+  } catch (error) {
+    if (!(error as Error).message.includes("EEXIST")) {
+      console.log(`Error creating raw entity folder: ${article.uri}`);
+    }
+  }
+
+  await writeFile(
+    `${outputFolder}/${article.uri}/raw/index.html`,
+    highlight.highlight(article.source!, {
+      language: "markdown",
+    }).value,
+  );
+};
+
 export const createSingleEntity = async (
   articleRoot: string,
   outputFolder: string,
@@ -225,6 +246,10 @@ export const createSingleEntity = async (
   );
 
   await renderEntity(outputFolder, data);
+
+  if (entity.type === "article") {
+    await renderRawArticle(outputFolder, data);
+  }
 };
 
 export const createEntities = async ({

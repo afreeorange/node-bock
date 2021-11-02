@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Nikhil Anand" />
+    <meta name="description" content="Nikhil's Personal Wiki" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:image" content="/img/logo512.png" />
+    <meta property="og:site_name" content="Nikhil's Personal Wiki" />
+
+    <link rel="icon" href="/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/img/logo192.png" />
+    <link rel="og:image" href="/img/logo512.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/styles.css" />
+
+    <title>{{ entity.name }}</title>
+  </head>
+  <body>
+    <div class="container" data-entity-uri="{{ entity.uri }}">
+      <header>
+        <nav>
+          <ul>
+            <li><a href="/search"><span>Search</span></a></li>
+            <li><a href="/Hello"><span>Home</span></a></li>
+            <li><a href="/articles"><span>Articles</span></a></li>
+            <li><a href="/random"><span>Random</span></a></li>
+            <li><a href="{{ entity.uri }}/raw"><span>Raw</span></a></li>
+            <li><a href="{{ entity.uri }}/revisions"><span>Revisions</span></a></li>
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <nav>
+          <ul>
+            {% for node in entity.hierarchy %}
+            <li>
+              <a data-entity-type="{{ node.type }}" href="{%- if node.name === "ROOT" -%}/ROOT{%- else -%}/{{ node.uri }}{%- endif -%}" title="{{ node.name }}">
+                {%- if node.name === "ROOT" -%}Root{%- else -%}{{ node.name}}{%- endif -%}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </nav>
+        <h1>{{ entity.name }}</h1>
+        {% if entity.type === "article" %}
+        <article>{{ entity.html | safe }}</article>
+        {% else %} {% if entity.readme %}
+        <div class="readme">{{ entity.readme.html | safe }}</div>
+        {% endif %}
+
+        <h2>Folders <span>{{ entity.children.folders | length }}</span></h2>
+        <ul>
+          {% for child in entity.children.folders %}
+          <li>
+            <a href="/{{ child.uri }}" title="{{ child.name }}">
+              {{ child.name }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+
+        <h2>Articles <span>{{ entity.children.articles | length }}</span></h2>
+        <ul>
+          {% for child in entity.children.articles %}
+          <li>
+            <a href="/{{ child.uri }}" title="{{ child.name }}">
+              {{ child.name }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </main>
+      <footer>
+        <ul>
+          {% if entity.sizeInBytes != 0 %}
+          <li>{{ entity.sizeInBytes }} bytes</li>
+          {% endif %}
+          <li>Created {{ entity.created }}</li>
+          <li>Modified {{ entity.modified }}</li>
+          <li><a href="https://github.com/afreeorange/bock" title="Link to this project on Github">{{ name }} v{{ version }}</a></li>
+        </ul>
+      </footer>
+    </div>
+  </body>
+</html>
