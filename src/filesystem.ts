@@ -18,6 +18,7 @@ import {
   UUID_NAMESPACE,
 } from "./constants";
 import parser from "./parser";
+import e from "express";
 
 export const renderArticles = async ({
   outputFolder,
@@ -233,13 +234,15 @@ export const createEntities = async ({
 }: Bock): Promise<void> => {
   const bar = new cliProgress.Bar({
     format: "[{bar}] {percentage}% | {value}/{total} | Processing: {entity}",
+    synchronousUpdate: false,
   });
 
   bar.start(listOfEntities.length, 0, { entity: "N/A" });
 
   await Promise.all(
-    listOfEntities.map(async (entity) => {
-      bar.update(1, {
+    listOfEntities.map(async (entity, index) => {
+      // This doesn't work as expected...
+      bar.update(index + 1, {
         entity: entity.name,
       });
 
