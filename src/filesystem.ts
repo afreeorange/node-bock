@@ -231,21 +231,21 @@ export const createEntities = async ({
   outputFolder,
   listOfEntities,
 }: Bock): Promise<void> => {
-  const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-  bar.start(listOfEntities.length, 0);
+  const bar = new cliProgress.Bar({
+    format: "[{bar}] {percentage}% | {value}/{total} | Processing: {entity}",
+  });
 
-  await Promise.all([
+  bar.start(listOfEntities.length, 0, { entity: "N/A" });
+
+  await Promise.all(
     listOfEntities.map(async (entity) => {
-      /**
-       * TODO: Why does this work and doing this at the end not?
-       * https://github.com/npkgz/cli-progress/issues/104
-       *
-       * Try to understand this...
-       */
-      bar.increment(1);
+      bar.update(1, {
+        entity: entity.name,
+      });
+
       await createSingleEntity(articleRoot, outputFolder, entity);
     }),
-  ]);
+  );
 
   bar.stop();
 };
