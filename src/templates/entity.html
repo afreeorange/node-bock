@@ -29,8 +29,10 @@
             <li><a href="/Hello"><span>Home</span></a></li>
             <li><a href="/articles"><span>Articles</span></a></li>
             <li><a href="/random"><span>Random</span></a></li>
+            {% if entity.type !== "folder" %}
             <li><a href="/{{ entity.uri }}/raw"><span>Raw</span></a></li>
             <li><a href="/{{ entity.uri }}/revisions"><span>Revisions</span></a></li>
+            {% endif %}
           </ul>
         </nav>
       </header>
