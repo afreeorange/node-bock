@@ -48,7 +48,7 @@
             {% endfor %}
           </ul>
         </nav>
-        <h1>{{ entity.name }}</h1>
+        <h1>{{ entity.name }} - {{ entity.uri }}</h1>
         {% if entity.type === "article" %}
         <article>{{ entity.html | safe }}</article>
         {% else %} {% if entity.readme %}

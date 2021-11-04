@@ -70,7 +70,7 @@ export const renderHome = async ({
     path: "Hello.md",
     sizeInBytes: 0,
     type: "article",
-    uri: "/Hello",
+    uri: "Hello",
     source,
     wordCount: wordCount(source),
     excerpt: "",
