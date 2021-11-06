@@ -14,8 +14,8 @@
   --color-grey-light: #ccc;
   --color-grey-superlight: #eee;
   --color-grey: #999;
-  --color-highlight-light: #ff0000;
   --color-highlight: #ff3300;
+  --color-highlight-light: #ff0000;
 }
 
 html,
@@ -93,15 +93,15 @@ h2 > span + span {
 }
 
 main h1 {
-  color: red;
+  color: var(--color-highlight);
 }
 main nav {
   font-size: small;
   margin-top: 1em;
 }
 main nav a {
-  color: gray;
-  text-decoration-color: #ccc;
+  color: var(--color-grey);
+  text-decoration-color: var(--color-grey-light);
 }
 main nav ul {
   list-style-type: none;
@@ -112,7 +112,7 @@ main nav ul li {
   display: inline-block;
 }
 main nav ul li:not(:last-child) {
-  margin-right: 0.5em;
+  margin-right: 0.25em;
 }
 main nav ul li a[data-entity-type]::before {
   width: 1.125em;
@@ -121,14 +121,14 @@ main nav ul li a[data-entity-type]::before {
   content: "";
   display: inline-block;
   margin-right: 0.5em;
-  background-color: gray;
+  background-color: var(--color-grey);
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: center;
   mask-position: center;
 }
 main nav ul li a[data-entity-type]:hover::before {
-  background-color: red;
+  background-color: var(--color-highlight);
 }
 main nav ul li a[data-entity-type="folder"]::before {
   -webkit-mask-image: url(/img/folder.svg);
@@ -149,7 +149,7 @@ main nav ul li:not(:last-child) a::after {
   content: "";
   display: inline-block;
   margin-left: 0.5em;
-  background-color: #ccc;
+  background-color: var(--color-grey-light);
   -webkit-mask-image: url(/img/chevron.svg);
   mask-image: url(/img/chevron.svg);
   -webkit-mask-repeat: no-repeat;
@@ -159,7 +159,7 @@ main nav ul li:not(:last-child) a::after {
 }
 
 footer {
-  color: gray;
+  color: var(--color-grey);
   font-size: small;
   margin: 4em 0;
 }
@@ -169,9 +169,9 @@ footer ul {
   padding: 0;
 }
 footer a {
-  color: gray;
   text-decoration: none;
-  border-bottom: 1px dotted #ccc;
+  color: var(--color-grey);
+  border-bottom: 1px dotted var(--color-grey-light);
 }
 footer li a::before {
   width: 1em;
@@ -179,7 +179,7 @@ footer li a::before {
   content: "";
   display: inline-block;
 
-  background-color: gray;
+  background-color: var(--color-grey);
   vertical-align: middle;
   margin-right: 0.5em;
 
@@ -218,7 +218,6 @@ footer li a::before {
   border: 0;
   font-size: large;
   padding: 0.25em;
-  border: 1px solid #ccc;
   border: 1px solid var(--color-grey-light);
   width: 100%;
 }
@@ -242,13 +241,13 @@ header nav ul li a {
   display: inline-block;
   width: 2em;
   height: 2em;
-  background-color: #ccc;
+  background-color: var(--color-grey-light);
 
   mask-repeat: no-repeat;
   mask-position: center;
 }
 header nav ul li a:hover {
-  background-color: red;
+  background-color: var(--color-highlight);
   transition: background-color 0.7s;
 }
 header nav ul li span {

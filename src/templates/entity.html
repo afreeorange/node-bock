@@ -48,7 +48,7 @@
             {% endfor %}
           </ul>
         </nav>
-        <h1>{{ entity.name }} - {{ entity.uri }}</h1>
+        <h1>{{ entity.name }}</h1>
         {% if entity.type === "article" %}
         <article>{{ entity.html | safe }}</article>
         {% else %} {% if entity.readme %}
@@ -83,8 +83,12 @@
           {% if entity.sizeInBytes != 0 %}
           <li>{{ entity.sizeInBytes | numeral("0,0") }} bytes</li>
           {% endif %}
-          <li>Created {{ entity.created }}</li>
-          <li>Modified {{ entity.modified }}</li>
+          {% if entity.created %}
+          <li>Created <span>{{ entity.created | date("PPPP 'at' h:mm B") }}</span></li>
+          {% endif %}
+          {% if entity.modified %}
+          <li>Modified <span>{{ entity.modified | date("PPPP 'at' h:mm B") }}</span></li>
+          {% endif %}
           <li><a href="https://github.com/afreeorange/bock" title="Link to this project on Github">{{ name }} v{{ version }}</a></li>
         </ul>
       </footer>

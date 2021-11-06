@@ -11,6 +11,7 @@ import {
   copyAssets,
   renderHome,
   renderArticles,
+  renderRoot,
 } from "./filesystem";
 import chalk from "chalk";
 
@@ -45,6 +46,9 @@ import chalk from "chalk";
 
   await renderArticles(bock);
   console.log(`Rendered Articles`);
+
+  await renderRoot(bock);
+  console.log(`Rendered Root`);
 
   if (watch) {
     console.log(`Watching ${articleRoot} for changes`);

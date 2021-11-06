@@ -63,7 +63,18 @@ export const renderHome = async ({
 
   const entity = {
     created: new Date(),
-    hierarchy: [],
+    hierarchy: [
+      {
+        name: "ROOT",
+        type: "folder",
+        uri: "",
+      },
+      {
+        name: "Hello",
+        type: "article",
+        uri: "Hello",
+      },
+    ],
     id: uuidv5(`/${HOME_PAGE_DOCUMENT}`, UUID_NAMESPACE),
     modified: new Date(),
     name: "Hello",
@@ -92,15 +103,34 @@ export const renderHome = async ({
   await writeFile(
     `${outputFolder}/index.html`,
     `
-  <html>
-    <head>
+<html>
+  <head>
+    <meta charset="UTF-8" />
     <meta http-equiv="refresh" content="0;url=/Hello" />
-    <title>Bock</title>
-    </head>
-    <body>
-      <a href="/Hello">Click here</a> if you are not redirected&hellip;
-    </body>
-  </html>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" href="/img/favicon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/styles.css" />
+
+    <title>Redirecting...</title>
+
+    <style type="text/css">
+      body {
+        align-items: center;
+        display: flex;
+        font-size: larger;
+        justify-content: center;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div><a href="/Hello">Click here</a> if you are not redirected&hellip;</div>
+  </body>
+</html>  
   `,
   );
 };
@@ -142,6 +172,68 @@ export const maybeReadme = async (articleRoot: string, entity: Entity) => {
   }
 
   return ret;
+};
+
+export const renderRoot = async ({
+  entities,
+  articleRoot,
+  outputFolder,
+}: Bock) => {
+  const rootEntities = Object.values(await getEntities(articleRoot, "", 1));
+
+  const entity = {
+    created: null,
+    hierarchy: [
+      {
+        name: "ROOT",
+        type: "folder",
+        uri: "",
+      },
+    ],
+    id: uuidv5(`/ROOT`, UUID_NAMESPACE),
+    modified: null,
+    name: "ROOT",
+    path: "/",
+    sizeInBytes: 0,
+    type: "folder",
+    uri: "ROOT",
+    children: {
+      articles: rootEntities
+        .filter((c) => c.type === "article")
+        .map((c) => ({
+          name: c.name,
+          type: c.type,
+          path: c.path,
+          uri: c.uri,
+        })),
+      folders: rootEntities
+        .filter((c) => c.type === "folder")
+        .map((c) => ({
+          name: c.name,
+          type: c.type,
+          path: c.path,
+          uri: c.uri,
+        })),
+    },
+  };
+
+  try {
+    await mkdir(`${outputFolder}/ROOT`);
+  } catch (error) {
+    if (!(error as Error).message.includes("EEXIST")) {
+      console.error(`Problem creating ${outputFolder}/ROOT: ${error}`);
+    }
+  }
+
+  await writeFile(
+    `${outputFolder}/ROOT/index.html`,
+    renderer.render(`${__dirname}/templates/entity.html`, {
+      entity,
+      version: packageJson.version,
+      name: packageJson.name,
+      type: entity.type,
+    }),
+  );
 };
 
 export const renderRawArticle = async (
