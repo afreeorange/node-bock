@@ -18,6 +18,8 @@
 * [ ] Revisions page
 * [ ] Compare page
 * [ ] Search Page
+* [ ] "This_is_a_Test!/Antoher/Damani&#39s_List_of_Jazz_101_Albums" <- quotes!
+
 
 ## Design Notes
 

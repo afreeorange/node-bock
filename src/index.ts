@@ -12,6 +12,7 @@ import {
   renderHome,
   renderArticles,
   renderRoot,
+  renderRandom,
 } from "./filesystem";
 import chalk from "chalk";
 
@@ -49,6 +50,9 @@ import chalk from "chalk";
 
   await renderRoot(bock);
   console.log(`Rendered Root`);
+
+  await renderRandom(bock);
+  console.log(`Rendered Random`);
 
   if (watch) {
     console.log(`Watching ${articleRoot} for changes`);

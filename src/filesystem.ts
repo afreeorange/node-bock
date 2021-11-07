@@ -1,5 +1,6 @@
 import { extname } from "path";
-import { mkdir, writeFile, readFile } from "fs/promises";
+import { mkdir, writeFile, readFile, stat } from "fs/promises";
+import mkdirp from "mkdirp";
 
 import { copy } from "fs-extra";
 import { v5 as uuidv5 } from "uuid";
@@ -50,19 +51,30 @@ export const renderHome = async ({
 }: Bock) => {
   let html;
   let source;
+  let stats;
 
   if (Object.keys(entities).includes("Hello.md")) {
     source = (
       await readFile(`${articleRoot}/${HOME_PAGE_DOCUMENT}`)
     ).toString();
+
+    stats = await stat(`${articleRoot}/${HOME_PAGE_DOCUMENT}`);
   } else {
-    source = `(Could not find a <code>${HOME_PAGE_DOCUMENT}</code>. You should make one!)`;
+    source = `(Could not find a \`${HOME_PAGE_DOCUMENT}\`. You should make one!)`;
+
+    try {
+      await mkdir(`${outputFolder}/Hello`);
+    } catch (error) {
+      if (!(error as Error).message.includes("EEXIST")) {
+        console.error(`Problem creating ${outputFolder}/Hello: ${error}`);
+      }
+    }
   }
 
   html = parser.render(source);
 
   const entity = {
-    created: new Date(),
+    created: stats ? stats.ctime : null,
     hierarchy: [
       {
         name: "ROOT",
@@ -76,7 +88,7 @@ export const renderHome = async ({
       },
     ],
     id: uuidv5(`/${HOME_PAGE_DOCUMENT}`, UUID_NAMESPACE),
-    modified: new Date(),
+    modified: stats ? stats.mtime : null,
     name: "Hello",
     path: "Hello.md",
     sizeInBytes: 0,
@@ -174,11 +186,7 @@ export const maybeReadme = async (articleRoot: string, entity: Entity) => {
   return ret;
 };
 
-export const renderRoot = async ({
-  entities,
-  articleRoot,
-  outputFolder,
-}: Bock) => {
+export const renderRoot = async ({ articleRoot, outputFolder }: Bock) => {
   const rootEntities = Object.values(await getEntities(articleRoot, "", 1));
 
   const entity = {
@@ -232,6 +240,26 @@ export const renderRoot = async ({
       version: packageJson.version,
       name: packageJson.name,
       type: entity.type,
+    }),
+  );
+};
+
+export const renderRandom = async ({ listOfEntities, outputFolder }: Bock) => {
+  try {
+    await mkdir(`${outputFolder}/random`);
+  } catch (error) {
+    if (!(error as Error).message.includes("EEXIST")) {
+      console.error(`Problem creating ${outputFolder}/random: ${error}`);
+    }
+  }
+
+  await writeFile(
+    `${outputFolder}/random/index.html`,
+    renderer.render(`${__dirname}/templates/random.html`, {
+      listOfEntities,
+      version: packageJson.version,
+      name: packageJson.name,
+      type: "random",
     }),
   );
 };

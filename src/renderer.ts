@@ -1,6 +1,6 @@
 import nunjucks from "nunjucks";
 import numeral from "numeral";
-import { format as formatDate } from "date-fns";
+import formatDate from "date-fns/format";
 
 export const renderer = nunjucks.configure({});
 renderer.addFilter("numeral", (number: string, format: string) => {

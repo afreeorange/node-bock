@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Nikhil Anand" />
+    <meta name="description" content="Nikhil's Personal Wiki" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:image" content="/img/logo512.png" />
+    <meta property="og:site_name" content="Nikhil's Personal Wiki" />
+
+    <link rel="icon" href="/img/favicon.png" />
+    <link rel="apple-touch-icon" href="/img/logo192.png" />
+    <link rel="og:image" href="/img/logo512.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/styles.css" />
+
+    <title>{{ entity.name }}</title>
+  </head>
+  <body>
+    <div class="container random">
+      <header>
+        <nav>
+          <ul>
+            <li>
+              <a href="/search"><span>Search</span></a>
+            </li>
+            <li>
+              <a href="/Hello"><span>Home</span></a>
+            </li>
+            <li>
+              <a href="/articles"><span>Articles</span></a>
+            </li>
+            <li>
+              <a href="/random"><span>Random</span></a>
+            </li>
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <noscript> You'll sadly need JavaScript for this&hellip; </noscript>
+      </main>
+      <footer>
+        <ul>
+          <li>
+            <a
+              href="https://github.com/afreeorange/bock"
+              title="Link to this project on Github"
+              >{{ name }} v{{ version }}</a
+            >
+          </li>
+        </ul>
+      </footer>
+    </div>
+    <script type="text/javascript">
+      (() => {
+        const URIs = [
+          {%- for entity in listOfEntities %}
+          "{{ entity.uri }}",
+          {%- endfor %}
+        ];
+
+        setTimeout(() => {
+          window.location.href = `/${URIs[Math.floor(Math.random() * URIs.length)]}`;
+        }, 3000);
+      })();
+    </script>
+  </body>
+</html>

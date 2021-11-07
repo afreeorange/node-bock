@@ -84,10 +84,10 @@
           <li>{{ entity.sizeInBytes | numeral("0,0") }} bytes</li>
           {% endif %}
           {% if entity.created %}
-          <li>Created <span>{{ entity.created | date("PPPP 'at' h:mm B") }}</span></li>
+          <li><strong>Created</strong> {{ entity.created | date("PPPP 'at' h:mm B") }}</li>
           {% endif %}
           {% if entity.modified %}
-          <li>Modified <span>{{ entity.modified | date("PPPP 'at' h:mm B") }}</span></li>
+          <li><strong>Modified</strong> {{ entity.modified | date("PPPP 'at' h:mm B") }}</li>
           {% endif %}
           <li><a href="https://github.com/afreeorange/bock" title="Link to this project on Github">{{ name }} v{{ version }}</a></li>
         </ul>
