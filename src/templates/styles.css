@@ -185,11 +185,6 @@ footer li a::before {
   -webkit-mask-image: url(/img/bock.svg);
   mask-image: url(/img/bock.svg);
 }
-footer li strong {
-  font-weight: normal;
-  min-width: 4.5em;
-  display: inline-block;
-}
 
 .articles main ul {
   margin: var(--root-spacing) 0;
