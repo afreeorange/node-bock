@@ -200,7 +200,7 @@ export const renderRoot = async ({ articleRoot, outputFolder }: Bock) => {
     ],
     id: uuidv5(`/ROOT`, UUID_NAMESPACE),
     modified: null,
-    name: "ROOT",
+    name: "Article Root",
     path: "/",
     sizeInBytes: 0,
     type: "folder",
