@@ -6,13 +6,10 @@ import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
 import fg from "fast-glob";
 import highlight from "highlight.js";
-import beautify from "js-beautify";
 
-import { renderer } from "./renderer";
-import packageJson from "../package.json";
+import { render } from "./renderer";
 import {
   ASSETS_FOLDER,
-  BEAUTIFY_OPTIONS,
   ENTITIES_TO_IGNORE,
   HOME_PAGE_DOCUMENT,
   JSON_PADDING,
@@ -22,10 +19,11 @@ import {
 } from "./constants";
 import parser from "./parser";
 
-export const renderArticles = async ({
-  outputFolder,
-  listOfEntities,
-}: Bock) => {
+import packageJson from "../package.json";
+
+export const createListOfArticles = async (bock: Bock) => {
+  const { outputFolder, listOfEntities, prettify } = bock;
+
   try {
     await mkdir(`${outputFolder}/articles`);
   } catch (error) {
@@ -36,23 +34,22 @@ export const renderArticles = async ({
 
   await writeFile(
     `${outputFolder}/articles/index.html`,
-    beautify.html(
-      renderer.render(`${__dirname}/templates/articles.html`, {
+    render({
+      template: `${__dirname}/templates/articles.html`,
+      variables: {
         articles: listOfEntities,
         version: packageJson.version,
         name: packageJson.name,
         type: "articles",
-      }),
-      BEAUTIFY_OPTIONS,
-    ),
+      },
+      prettify,
+    }),
   );
 };
 
-export const renderHome = async ({
-  entities,
-  articleRoot,
-  outputFolder,
-}: Bock) => {
+export const createHome = async (bock: Bock) => {
+  const { entities, articleRoot, outputFolder, prettify } = bock;
+
   let html;
   let source;
   let stats;
@@ -108,15 +105,16 @@ export const renderHome = async ({
 
   await writeFile(
     `${outputFolder}/Hello/index.html`,
-    beautify.html(
-      renderer.render(`${__dirname}/templates/entity.html`, {
+    render({
+      template: `${__dirname}/templates/entity.html`,
+      variables: {
         entity,
         version: packageJson.version,
         name: packageJson.name,
         type: entity.type,
-      }),
-      BEAUTIFY_OPTIONS,
-    ),
+      },
+      prettify,
+    }),
   );
 
   await writeFile(
@@ -154,23 +152,26 @@ export const renderHome = async ({
   );
 };
 
-export const wordCount = (articleText: string): number =>
-  articleText.split(" ").length;
+export const createEntity = async (bock: Bock, entity: Entity) => {
+  const { outputFolder, prettify } = bock;
 
-export const renderEntity = async (outputFolder: string, entity: Entity) => {
   await writeFile(
     `${outputFolder}/${entity.uri}/index.html`,
-    beautify.html(
-      renderer.render(`${__dirname}/templates/entity.html`, {
+    render({
+      template: `${__dirname}/templates/entity.html`,
+      variables: {
         entity,
         version: packageJson.version,
         name: packageJson.name,
         type: entity.type,
-      }),
-      BEAUTIFY_OPTIONS,
-    ),
+      },
+      prettify,
+    }),
   );
 };
+
+export const wordCount = (articleText: string): number =>
+  articleText.split(" ").length;
 
 export const maybeReadme = async (articleRoot: string, entity: Entity) => {
   let ret: {
@@ -196,7 +197,8 @@ export const maybeReadme = async (articleRoot: string, entity: Entity) => {
   return ret;
 };
 
-export const renderRoot = async ({ articleRoot, outputFolder }: Bock) => {
+export const createRoot = async (bock: Bock) => {
+  const { articleRoot, outputFolder, prettify } = bock;
   const rootEntities = Object.values(await getEntities(articleRoot, "", 1));
 
   const entity = {
@@ -245,19 +247,24 @@ export const renderRoot = async ({ articleRoot, outputFolder }: Bock) => {
 
   await writeFile(
     `${outputFolder}/ROOT/index.html`,
-    beautify.html(
-      renderer.render(`${__dirname}/templates/entity.html`, {
+    render({
+      template: `${__dirname}/templates/entity.html`,
+      variables: {
         entity,
         version: packageJson.version,
         name: packageJson.name,
         type: entity.type,
-      }),
-      BEAUTIFY_OPTIONS,
-    ),
+      },
+      prettify,
+    }),
   );
 };
 
-export const renderRandom = async ({ listOfEntities, outputFolder }: Bock) => {
+export const createRandom = async ({
+  listOfEntities,
+  outputFolder,
+  prettify,
+}: Bock) => {
   try {
     await mkdir(`${outputFolder}/random`);
   } catch (error) {
@@ -268,22 +275,23 @@ export const renderRandom = async ({ listOfEntities, outputFolder }: Bock) => {
 
   await writeFile(
     `${outputFolder}/random/index.html`,
-    beautify.html(
-      renderer.render(`${__dirname}/templates/random.html`, {
+
+    render({
+      template: `${__dirname}/templates/random.html`,
+      variables: {
         listOfEntities,
         version: packageJson.version,
         name: packageJson.name,
         type: "random",
-      }),
-      BEAUTIFY_OPTIONS,
-    ),
+      },
+      prettify,
+    }),
   );
 };
 
-export const renderRawArticle = async (
-  outputFolder: string,
-  article: Article,
-) => {
+export const createRawArticle = async (bock: Bock, article: Article) => {
+  const { outputFolder, prettify } = bock;
+
   try {
     await mkdir(`${outputFolder}/${article.uri}/raw`);
   } catch (error) {
@@ -294,8 +302,9 @@ export const renderRawArticle = async (
 
   await writeFile(
     `${outputFolder}/${article.uri}/raw/index.html`,
-    beautify.html(
-      renderer.render(`${__dirname}/templates/raw.html`, {
+    render({
+      template: `${__dirname}/templates/raw.html`,
+      variables: {
         entity: article,
         raw: highlight.highlight(article.source!, {
           language: "markdown",
@@ -303,17 +312,17 @@ export const renderRawArticle = async (
         version: packageJson.version,
         name: packageJson.name,
         type: "raw",
-      }),
-      BEAUTIFY_OPTIONS,
-    ),
+      },
+      prettify,
+    }),
   );
 };
 
 export const createSingleEntity = async (
-  articleRoot: string,
-  outputFolder: string,
+  bock: Bock,
   entity: Entity,
 ): Promise<void> => {
+  const { outputFolder, articleRoot } = bock;
   const {
     created,
     hierarchy,
@@ -392,18 +401,16 @@ export const createSingleEntity = async (
     JSON.stringify(data, null, JSON_PADDING),
   );
 
-  await renderEntity(outputFolder, data);
+  await createEntity(bock, data);
 
   if (entity.type === "article") {
-    await renderRawArticle(outputFolder, data);
+    await createRawArticle(bock, data);
   }
 };
 
-export const createEntities = async ({
-  articleRoot,
-  outputFolder,
-  listOfEntities,
-}: Bock): Promise<void> => {
+export const createEntities = async (bock: Bock): Promise<void> => {
+  const { listOfEntities } = bock;
+
   const bar = new cliProgress.Bar({
     format: "[{bar}] {value} of {total} ({entity})",
     synchronousUpdate: false,
@@ -412,7 +419,7 @@ export const createEntities = async ({
   bar.start(listOfEntities.length, 0, { entity: "N/A" });
 
   for await (const e of listOfEntities) {
-    await createSingleEntity(articleRoot, outputFolder, e);
+    await createSingleEntity(bock, e);
     bar.increment({
       entity: e.name,
     });

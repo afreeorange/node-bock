@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 import { writeFile } from "fs/promises";
+
 import chokidar from "chokidar";
+import chalk from "chalk";
 
 import CLI from "./cli";
 import {
@@ -9,12 +11,11 @@ import {
   createSingleEntity,
   getEntities,
   copyAssets,
-  renderHome,
-  renderArticles,
-  renderRoot,
-  renderRandom,
+  createHome,
+  createListOfArticles,
+  createRoot,
+  createRandom,
 } from "./filesystem";
-import chalk from "chalk";
 
 (async () => {
   CLI.parse(process.argv);
@@ -43,16 +44,16 @@ import chalk from "chalk";
   await copyAssets(bock);
   console.log(`Copied static assets`);
 
-  await renderHome(bock);
+  await createHome(bock);
   console.log(`Rendered Homepage`);
 
-  await renderArticles(bock);
+  await createListOfArticles(bock);
   console.log(`Rendered Articles`);
 
-  await renderRoot(bock);
+  await createRoot(bock);
   console.log(`Rendered Root`);
 
-  await renderRandom(bock);
+  await createRandom(bock);
   console.log(`Rendered Random`);
 
   if (watch) {
@@ -67,7 +68,8 @@ import chalk from "chalk";
       console.log(
         chalk.yellow(`${chalk.green(_path)} changed... re-rendering`),
       );
-      await createSingleEntity(articleRoot, outputFolder, entities[_path]);
+
+      await createSingleEntity(bock, entities[_path]);
     });
   }
 })();
