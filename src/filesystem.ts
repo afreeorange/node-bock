@@ -1,17 +1,18 @@
 import { extname } from "path";
 import { mkdir, writeFile, readFile, stat } from "fs/promises";
-import mkdirp from "mkdirp";
 
 import { copy } from "fs-extra";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
 import fg from "fast-glob";
 import highlight from "highlight.js";
+import beautify from "js-beautify";
 
 import { renderer } from "./renderer";
 import packageJson from "../package.json";
 import {
   ASSETS_FOLDER,
+  BEAUTIFY_OPTIONS,
   ENTITIES_TO_IGNORE,
   HOME_PAGE_DOCUMENT,
   JSON_PADDING,
@@ -35,12 +36,15 @@ export const renderArticles = async ({
 
   await writeFile(
     `${outputFolder}/articles/index.html`,
-    renderer.render(`${__dirname}/templates/articles.html`, {
-      articles: listOfEntities,
-      version: packageJson.version,
-      name: packageJson.name,
-      type: "articles",
-    }),
+    beautify.html(
+      renderer.render(`${__dirname}/templates/articles.html`, {
+        articles: listOfEntities,
+        version: packageJson.version,
+        name: packageJson.name,
+        type: "articles",
+      }),
+      BEAUTIFY_OPTIONS,
+    ),
   );
 };
 
@@ -104,12 +108,15 @@ export const renderHome = async ({
 
   await writeFile(
     `${outputFolder}/Hello/index.html`,
-    renderer.render(`${__dirname}/templates/entity.html`, {
-      entity,
-      version: packageJson.version,
-      name: packageJson.name,
-      type: entity.type,
-    }),
+    beautify.html(
+      renderer.render(`${__dirname}/templates/entity.html`, {
+        entity,
+        version: packageJson.version,
+        name: packageJson.name,
+        type: entity.type,
+      }),
+      BEAUTIFY_OPTIONS,
+    ),
   );
 
   await writeFile(
@@ -153,12 +160,15 @@ export const wordCount = (articleText: string): number =>
 export const renderEntity = async (outputFolder: string, entity: Entity) => {
   await writeFile(
     `${outputFolder}/${entity.uri}/index.html`,
-    renderer.render(`${__dirname}/templates/entity.html`, {
-      entity,
-      version: packageJson.version,
-      name: packageJson.name,
-      type: entity.type,
-    }),
+    beautify.html(
+      renderer.render(`${__dirname}/templates/entity.html`, {
+        entity,
+        version: packageJson.version,
+        name: packageJson.name,
+        type: entity.type,
+      }),
+      BEAUTIFY_OPTIONS,
+    ),
   );
 };
 
@@ -235,12 +245,15 @@ export const renderRoot = async ({ articleRoot, outputFolder }: Bock) => {
 
   await writeFile(
     `${outputFolder}/ROOT/index.html`,
-    renderer.render(`${__dirname}/templates/entity.html`, {
-      entity,
-      version: packageJson.version,
-      name: packageJson.name,
-      type: entity.type,
-    }),
+    beautify.html(
+      renderer.render(`${__dirname}/templates/entity.html`, {
+        entity,
+        version: packageJson.version,
+        name: packageJson.name,
+        type: entity.type,
+      }),
+      BEAUTIFY_OPTIONS,
+    ),
   );
 };
 
@@ -255,12 +268,15 @@ export const renderRandom = async ({ listOfEntities, outputFolder }: Bock) => {
 
   await writeFile(
     `${outputFolder}/random/index.html`,
-    renderer.render(`${__dirname}/templates/random.html`, {
-      listOfEntities,
-      version: packageJson.version,
-      name: packageJson.name,
-      type: "random",
-    }),
+    beautify.html(
+      renderer.render(`${__dirname}/templates/random.html`, {
+        listOfEntities,
+        version: packageJson.version,
+        name: packageJson.name,
+        type: "random",
+      }),
+      BEAUTIFY_OPTIONS,
+    ),
   );
 };
 
@@ -278,15 +294,18 @@ export const renderRawArticle = async (
 
   await writeFile(
     `${outputFolder}/${article.uri}/raw/index.html`,
-    renderer.render(`${__dirname}/templates/raw.html`, {
-      entity: article,
-      raw: highlight.highlight(article.source!, {
-        language: "markdown",
-      }).value,
-      version: packageJson.version,
-      name: packageJson.name,
-      type: "raw",
-    }),
+    beautify.html(
+      renderer.render(`${__dirname}/templates/raw.html`, {
+        entity: article,
+        raw: highlight.highlight(article.source!, {
+          language: "markdown",
+        }).value,
+        version: packageJson.version,
+        name: packageJson.name,
+        type: "raw",
+      }),
+      BEAUTIFY_OPTIONS,
+    ),
   );
 };
 
