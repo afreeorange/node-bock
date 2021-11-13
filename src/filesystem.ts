@@ -21,6 +21,79 @@ import parser from "./parser";
 
 import packageJson from "../package.json";
 
+export const wordCount = (articleText: string): number =>
+  articleText.split(" ").length;
+
+export const maybeReadme = async (articleRoot: string, entity: Entity) => {
+  let ret: {
+    source: string;
+    html: string;
+  } | null;
+
+  try {
+    let source = (
+      await readFile(`${articleRoot}/${entity.path}/README.md`)
+    ).toString();
+
+    let html = parser.render(source);
+
+    ret = {
+      source,
+      html,
+    };
+  } catch (e) {
+    ret = null;
+  }
+
+  return ret;
+};
+
+export const generateIdFrom = (articleRoot: string, articlePath: string) =>
+  uuidv5(`${articleRoot}/${articlePath}`, UUID_NAMESPACE);
+
+export const generatePrettyPath = (entityPath: string) =>
+  entityPath.replace(/\s+/g, "_");
+
+export const removeExtension = (articlePath: string) =>
+  articlePath.replace(extname(articlePath), "");
+
+export const generateHierarchyFrom = (
+  articleRoot: string,
+  articlePath: string,
+): EntityHierarchy[] => {
+  const initialList = [
+    ROOT_NODE_NAME,
+    ...articlePath
+      .replace(articleRoot, "")
+      .split("/")
+      .filter((p) => p !== ""),
+  ].map((e) => ({
+    name: removeExtension(e),
+    type: extname(e).toLowerCase().includes("md") ? "article" : "folder",
+    uri: removeExtension(generatePrettyPath(e.replace(`${articleRoot}/`, ""))),
+  }));
+
+  let finalList: any[] = [
+    {
+      ...initialList[0],
+      uri: "",
+    },
+  ];
+
+  for (let i = 1; i < initialList.length; i++) {
+    finalList.push({
+      name: initialList[i].name,
+      type: initialList[i].type,
+      uri: initialList
+        .slice(1, i + 1)
+        .map((_) => _.uri)
+        .reduce((a, v) => a + "/" + v),
+    });
+  }
+
+  return finalList;
+};
+
 export const createListOfArticles = async (bock: Bock) => {
   const { outputFolder, listOfEntities, prettify } = bock;
 
@@ -168,33 +241,6 @@ export const createEntity = async (bock: Bock, entity: Entity) => {
       prettify,
     }),
   );
-};
-
-export const wordCount = (articleText: string): number =>
-  articleText.split(" ").length;
-
-export const maybeReadme = async (articleRoot: string, entity: Entity) => {
-  let ret: {
-    source: string;
-    html: string;
-  } | null;
-
-  try {
-    let source = (
-      await readFile(`${articleRoot}/${entity.path}/README.md`)
-    ).toString();
-
-    let html = parser.render(source);
-
-    ret = {
-      source,
-      html,
-    };
-  } catch (e) {
-    ret = null;
-  }
-
-  return ret;
 };
 
 export const createRoot = async (bock: Bock) => {
@@ -447,52 +493,6 @@ export const copyAssets = async ({ articleRoot, outputFolder }: Bock) => {
   } catch (error) {
     console.log(`Could not copy assets: ${error}`);
   }
-};
-
-export const generateIdFrom = (articleRoot: string, articlePath: string) =>
-  uuidv5(`${articleRoot}/${articlePath}`, UUID_NAMESPACE);
-
-export const generatePrettyPath = (entityPath: string) =>
-  entityPath.replace(/\s+/g, "_");
-
-export const removeExtension = (articlePath: string) =>
-  articlePath.replace(extname(articlePath), "");
-
-export const generateHierarchyFrom = (
-  articleRoot: string,
-  articlePath: string,
-): EntityHierarchy[] => {
-  const initialList = [
-    ROOT_NODE_NAME,
-    ...articlePath
-      .replace(articleRoot, "")
-      .split("/")
-      .filter((p) => p !== ""),
-  ].map((e) => ({
-    name: removeExtension(e),
-    type: extname(e).toLowerCase().includes("md") ? "article" : "folder",
-    uri: removeExtension(generatePrettyPath(e.replace(`${articleRoot}/`, ""))),
-  }));
-
-  let finalList: any[] = [
-    {
-      ...initialList[0],
-      uri: "",
-    },
-  ];
-
-  for (let i = 1; i < initialList.length; i++) {
-    finalList.push({
-      name: initialList[i].name,
-      type: initialList[i].type,
-      uri: initialList
-        .slice(1, i + 1)
-        .map((_) => _.uri)
-        .reduce((a, v) => a + "/" + v),
-    });
-  }
-
-  return finalList;
 };
 
 export const getEntities = async (
