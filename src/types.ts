@@ -53,4 +53,5 @@ type Bock = {
   entities: Record<string, Entity>;
   listOfEntities: Entity[];
   listOfPaths: string[];
+  prettify: boolean;
 };

@@ -18,7 +18,7 @@ import chalk from "chalk";
 
 (async () => {
   CLI.parse(process.argv);
-  const { articleRoot, outputFolder, watch } = CLI.opts();
+  const { articleRoot, outputFolder, watch, prettify } = CLI.opts();
   const entities = await getEntities(articleRoot);
   const bock: Bock = {
     articleRoot,
@@ -26,6 +26,7 @@ import chalk from "chalk";
     entities,
     listOfEntities: Object.values(entities),
     listOfPaths: Object.keys(entities),
+    prettify,
   };
 
   await writeFile(
