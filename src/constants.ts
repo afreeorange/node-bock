@@ -1,12 +1,14 @@
+import { HTMLBeautifyOptions } from "js-beautify";
+
 export const ASSETS_FOLDER = "__assets";
-export const BEAUTIFY_OPTIONS = {
-  indent_size: 2,
+export const BEAUTIFY_OPTIONS: HTMLBeautifyOptions = {
+  end_with_newline: false,
   indent_char: " ",
+  indent_empty_lines: false,
+  indent_size: 2,
   max_preserve_newlines: -1,
   preserve_newlines: false,
-  end_with_newline: false,
   wrap_line_length: 0,
-  indent_empty_lines: false,
 };
 export const ENTITIES_TO_IGNORE = [".git", "search"];
 export const HOME_PAGE_DOCUMENT = "Hello.md";

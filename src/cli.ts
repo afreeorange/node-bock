@@ -1,9 +1,11 @@
 import { Command } from "commander";
 
+import packageJson from "../package.json";
+
 const bockCLI = new Command();
 
 bockCLI
-  .version("1.0.0")
+  .version(packageJson.version)
   .requiredOption(
     "-a, --article-root <articleRoot>",
     "Git repo containing your articles",
