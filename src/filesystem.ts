@@ -203,7 +203,7 @@ export const createHome = async (bock: Bock) => {
 
     <link rel="icon" href="/img/favicon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
 
     <title>Redirecting...</title>
 

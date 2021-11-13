@@ -16,7 +16,7 @@
     <link rel="apple-touch-icon" href="/img/logo192.png" />
     <link rel="og:image" href="/img/logo512.png" />
     <link rel="manifest" href="/manifest.json" />
-    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
 
     <title>List of Articles</title>
   </head>
@@ -41,12 +41,19 @@
         </nav>
         <h1>Articles <span>{{ articles | length }}</span></h1>
       </header>
-      <main>
-        <form role="search"><input type="search" /></form>
-        <ul>
+      <main id="list-of-articles">
+        <form role="search">
+          <input type="search" class="search" />
+          <noscript>You'll sadly need JavaScript for this feature...</noscript>
+        </form>
+        <ul class="list">
           {% for article in articles %}
           <li>
-            <a href="/{{ article.uri }}" title="Read {{ article.name }}">
+            <a
+              href="/{{ article.uri }}"
+              title="Read {{ article.name }}"
+              class="path"
+            >
               {{ article.path | replace(".md", "") | replace("/", " &rarr; ") |
               safe }}
             </a>
@@ -66,5 +73,13 @@
         </ul>
       </footer>
     </div>
+    <script src="/js/list.min.js"></script>
+    <script>
+      (() => {
+        new List(document.getElementsByTagName("main")[0], {
+          valueNames: ["path"],
+        });
+      })();
+    </script>
   </body>
 </html>
