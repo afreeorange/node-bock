@@ -277,6 +277,10 @@ header nav ul li a[href*="/revisions"] {
   -webkit-mask-image: url(/img/revisions.svg);
   mask-image: url(/img/revisions.svg);
 }
+header nav ul li a[href*="/index.json"] {
+  -webkit-mask-image: url(/img/json.svg);
+  mask-image: url(/img/json.svg);
+}
 
 .container.raw main pre {
   overflow-x: scroll;

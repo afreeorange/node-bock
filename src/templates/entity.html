@@ -15,9 +15,9 @@
     <link rel="icon" href="/img/favicon.png" />
     <link rel="apple-touch-icon" href="/img/logo192.png" />
     <link rel="og:image" href="/img/logo512.png" />
-    <link rel="manifest" href="/manifest.json" />
     <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="/highlight.css" />
+    <link rel="stylesheet" href="/css/highlight.css" />
+    <link rel="manifest" href="/manifest.json" />
 
     <title>{{ entity.name }}</title>
   </head>
@@ -33,6 +33,7 @@
             {% if entity.type !== "folder" %}
             <li><a href="/{{ entity.uri }}/raw"><span>Raw</span></a></li>
             <li><a href="/{{ entity.uri }}/revisions"><span>Revisions</span></a></li>
+            <li><a href="/{{ entity.uri }}/index.json"><span>JSON</span></a></li>
             {% endif %}
           </ul>
         </nav>
