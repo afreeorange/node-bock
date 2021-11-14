@@ -38,7 +38,7 @@
             <li>
               <a href="/random"{% if type === "random" %}class="active"{% endif %}><span>Random</span></a>
             </li>
-            {% if type !== "folder" %}
+            {% if type === "article" or type === "home" %}
             <li>
               <a href="/{{ entity.uri }}/raw"{% if type === "raw" %}class="active"{% endif %}><span>Raw</span></a>
             </li>
