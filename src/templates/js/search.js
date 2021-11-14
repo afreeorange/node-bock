@@ -27,25 +27,23 @@ const REMOTE_DATABASE = "/entities.db";
   );
 
   const template = `
-     <ul>
-       {% for row in rows %}
-       <li>
-         <a href="/{{ row.uri }}" title="{{ row.name }}">{{ row.highlightedPath | arrowPath | markMatch | safe }}</a>
-         <br />
-         <small>
-           {{ row.content | markMatch | safe }}
-         </small>
-       </li>
-       {% endfor %}
-     </ul>
+   {% for row in rows %}
+   <li>
+     <a href="/{{ row.uri }}" title="{{ row.name }}">{{ row.highlightedPath | arrowPath | markMatch | safe }}</a>
+     <br />
+     <small>
+       {{ row.content | markMatch | safe }}
+     </small>
+   </li>
+   {% endfor %}
    `;
 
   const resultsSection = document.querySelector(`[data-content="results"]`);
   const listSection = document.querySelector(
     `[data-content="list-of-articles"]`,
   );
-  const countSection = document.querySelector("h1 span");
-  const oldCount = document.querySelector("h1 span").innerText;
+  const countSection = document.querySelector("h1");
+  const oldCount = document.querySelector("h1").innerHTML;
 
   document.querySelector("input").addEventListener("keyup", (e) => {
     const term = e.target.value;
@@ -53,17 +51,17 @@ const REMOTE_DATABASE = "/entities.db";
     if (term && term.length >= 3) {
       // https://sqlite.org/forum/info/00d53dbed15f5e5a
       const thingSearchStatement = db.prepare(`
-           SELECT
-             uri,
-             name,
-             highlight(articles_fts, 6, '>>>', '<<<') as highlightedPath,
-             snippet(articles_fts, 1, '>>>', '<<<', '...', 50) as content,
-             path
-           FROM articles_fts
-           WHERE articles_fts MATCH 'path:${term}* OR content:${term}*'
-           ORDER BY RANK
-           LIMIT 100
-           `);
+             SELECT
+               uri,
+               name,
+               highlight(articles_fts, 6, '>>>', '<<<') as highlightedPath,
+               snippet(articles_fts, 1, '>>>', '<<<', '...', 50) as content,
+               path
+             FROM articles_fts
+             WHERE articles_fts MATCH 'path:${term}* OR content:${term}*'
+             ORDER BY RANK
+             LIMIT 100
+             `);
 
       let rows = [];
       while (thingSearchStatement.step()) {
@@ -75,7 +73,14 @@ const REMOTE_DATABASE = "/entities.db";
 
       thingSearchStatement.free();
 
-      countSection.innerText = rows.length;
+      const summary =
+        rows.length > 1
+          ? rows.length.toString() + " results"
+          : rows.length === 1
+          ? "One result"
+          : "No Results :/";
+
+      countSection.innerHTML = term + " <span>" + summary + "</span>";
       listSection.style.display = "none";
       resultsSection.style.display = "block";
       resultsSection.innerHTML = renderer.renderString(template, {
@@ -84,7 +89,7 @@ const REMOTE_DATABASE = "/entities.db";
         rows,
       });
     } else {
-      countSection.innerText = oldCount;
+      countSection.innerHTML = oldCount;
       listSection.style.display = "block";
       resultsSection.style.display = "none";
     }
