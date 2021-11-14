@@ -24,6 +24,8 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
     helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
   line-height: var(--line-height);
+  margin: 0;
+  padding: 0;
 }
 
 .container {
@@ -199,26 +201,31 @@ div[data-content="results"] {
   overflow-x: hidden;
 }
 
+div[data-content="results"] ul,
 ul[data-content="list-of-articles"] {
   margin: var(--root-spacing) 0;
   padding: 0;
 }
 
+div[data-content="results"] ul a,
 ul[data-content="list-of-articles"] a {
   color: var(--color-black);
   text-decoration: none;
 }
 
+div[data-content="results"] ul a:hover,
 ul[data-content="list-of-articles"] a:hover {
   color: var(--color-highlight);
   text-decoration: underline;
 }
 
+div[data-content="results"] ul li,
 ul[data-content="list-of-articles"] li {
   padding: 0.25em;
   list-style-type: none;
 }
 
+div[data-content="results"] ul li:nth-child(2n),
 ul[data-content="list-of-articles"] li:nth-child(2n) {
   border-top: 1px dotted var(--color-grey-light);
   border-bottom: 1px dotted var(--color-grey-light);
@@ -311,4 +318,13 @@ header nav ul li a.active {
   :root {
     --max-width: 95%;
   }
+}
+
+noscript {
+  background-color: var(--color-highlight);
+  color: white;
+  width: 100%;
+  display: block;
+  font-size: small;
+  text-align: center;
 }
