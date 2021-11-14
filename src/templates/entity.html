@@ -1,39 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="author" content="Nikhil Anand" />
-    <meta name="description" content="Nikhil's Personal Wiki" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <meta property="og:image" content="/img/logo512.png" />
-    <meta property="og:site_name" content="Nikhil's Personal Wiki" />
-
-    <link rel="icon" href="/img/favicon.png" />
-    <link rel="apple-touch-icon" href="/img/logo192.png" />
-    <link rel="og:image" href="/img/logo512.png" />
-    <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="/css/highlight.css" />
-    <link rel="manifest" href="/manifest.json" />
-
+    {% include "./__head.html" %}
     <title>{{ entity.name }}</title>
   </head>
   <body>
-    <div class="container" data-entity-uri="{{ entity.uri }}">
+    <div class="container {{ type }}" data-entity-uri="{{ entity.uri }}">
       <header>
         <nav>
           <ul>
             <li><a href="/search"><span>Search</span></a></li>
             <li><a href="/Hello"><span>Home</span></a></li>
-            <li><a href="/articles"><span>Articles</span></a></li>
             <li><a href="/random"><span>Random</span></a></li>
             {% if entity.type !== "folder" %}
             <li><a href="/{{ entity.uri }}/raw"><span>Raw</span></a></li>
             <li><a href="/{{ entity.uri }}/revisions"><span>Revisions</span></a></li>
-            <li><a href="/{{ entity.uri }}/index.json"><span>JSON</span></a></li>
             {% endif %}
           </ul>
         </nav>

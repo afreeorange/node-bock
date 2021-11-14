@@ -94,11 +94,11 @@ export const generateHierarchyFrom = (
   return finalList;
 };
 
-export const createListOfArticles = async (bock: Bock) => {
+export const createSearch = async (bock: Bock) => {
   const { outputFolder, listOfEntities, prettify } = bock;
 
   try {
-    await mkdir(`${outputFolder}/articles`);
+    await mkdir(`${outputFolder}/search`);
   } catch (error) {
     if (!(error as Error).message.includes("EEXIST")) {
       console.log(`Error creating articles folder: ${error}`);
@@ -106,14 +106,14 @@ export const createListOfArticles = async (bock: Bock) => {
   }
 
   await writeFile(
-    `${outputFolder}/articles/index.html`,
+    `${outputFolder}/search/index.html`,
     render({
-      template: `${__dirname}/templates/articles.html`,
+      template: `${__dirname}/templates/search.html`,
       variables: {
         articles: listOfEntities,
         version: packageJson.version,
         name: packageJson.name,
-        type: "articles",
+        type: "search",
       },
       prettify,
     }),

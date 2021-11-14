@@ -77,18 +77,24 @@ h2 > span + span {
   margin-left: calc(var(--root-spacing) / 2);
 }
 
-/* MISCELLANEOUS */
-
 .container header > h1 {
   margin-top: 0.4em;
 }
 
-/* RESPONSIVE */
+.container.random main {
+  background-color: red;
+  width: 15em;
+  height: 15em;
+  margin: 3em auto;
 
-@media all and (max-width: 700px) {
-  :root {
-    --max-width: 95%;
-  }
+  background-color: var(--color-highlight);
+
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url(/img/twenty-die.svg);
+  mask-image: url(/img/twenty-die.svg);
+
+  animation: rotation 4s infinite cubic-bezier(1, 2.5, 0, 1.5);
 }
 
 main h1 {
@@ -156,6 +162,9 @@ main nav ul li:not(:last-child) a::after {
   -webkit-mask-position: center;
   mask-position: center;
 }
+main pre {
+  white-space: pre-wrap;
+}
 
 footer {
   color: var(--color-grey);
@@ -186,36 +195,40 @@ footer li a::before {
   mask-image: url(/img/bock.svg);
 }
 
-.articles main ul {
+div[data-content="results"] {
+  overflow-x: hidden;
+}
+
+ul[data-content="list-of-articles"] {
   margin: var(--root-spacing) 0;
   padding: 0;
 }
 
-.articles main ul a {
+ul[data-content="list-of-articles"] a {
   color: var(--color-black);
   text-decoration: none;
 }
 
-.articles main ul a:hover {
+ul[data-content="list-of-articles"] a:hover {
   color: var(--color-highlight);
   text-decoration: underline;
 }
 
-.articles main ul li {
+ul[data-content="list-of-articles"] li {
   padding: 0.25em;
   list-style-type: none;
 }
 
-.articles main ul li:nth-child(2n) {
+ul[data-content="list-of-articles"] li:nth-child(2n) {
   border-top: 1px dotted var(--color-grey-light);
   border-bottom: 1px dotted var(--color-grey-light);
 }
 
-.articles main form[role="search"] input {
+main form[role="search"] input {
   border-radius: 0.25em;
   border-radius: var(--border-radius);
   border: 0;
-  font-size: large;
+  font-size: 150%;
   padding: 0.25em;
   border: 1px solid var(--color-grey-light);
   width: 100%;
@@ -281,9 +294,8 @@ header nav ul li a[href*="/index.json"] {
   -webkit-mask-image: url(/img/json.svg);
   mask-image: url(/img/json.svg);
 }
-
-.container.raw main pre {
-  overflow-x: scroll;
+header nav ul li a.active {
+  background-color: var(--color-highlight);
 }
 
 @keyframes rotation {
@@ -295,18 +307,8 @@ header nav ul li a[href*="/index.json"] {
   }
 }
 
-.container.random main {
-  background-color: red;
-  width: 15em;
-  height: 15em;
-  margin: 3em auto;
-
-  background-color: var(--color-highlight);
-
-  mask-repeat: no-repeat;
-  mask-position: center;
-  -webkit-mask-image: url(/img/twenty-die.svg);
-  mask-image: url(/img/twenty-die.svg);
-
-  animation: rotation 4s infinite cubic-bezier(1, 2.5, 0, 1.5);
+@media all and (max-width: 700px) {
+  :root {
+    --max-width: 95%;
+  }
 }

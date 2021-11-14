@@ -12,10 +12,11 @@ import {
   getEntities,
   copyAssets,
   createHome,
-  createListOfArticles,
+  createSearch,
   createRoot,
   createRandom,
 } from "./filesystem";
+import { createDatabase } from "./database";
 
 (async () => {
   CLI.parse(process.argv);
@@ -44,11 +45,14 @@ import {
   await copyAssets(bock);
   console.log(`Copied static assets`);
 
+  createDatabase(bock);
+  console.log(`Generated SQLite Database`);
+
   await createHome(bock);
   console.log(`Rendered Homepage`);
 
-  await createListOfArticles(bock);
-  console.log(`Rendered Articles`);
+  await createSearch(bock);
+  console.log(`Rendered Search`);
 
   await createRoot(bock);
   console.log(`Rendered Root`);
