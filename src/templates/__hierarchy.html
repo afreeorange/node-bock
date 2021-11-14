@@ -1,0 +1,21 @@
+<nav>
+    <ul>
+        {% for node in entity.hierarchy %}
+        <li>
+        <a data-entity-type="{{ node.type }}" href="{%- if node.name === "ROOT" -%}/ROOT{%- else -%}/{{ node.uri }}{%- endif -%}" title="{{ node.name }}">
+            {%- if node.name === "ROOT" -%}Root{%- else -%}{{ node.name}}{%- endif -%}
+        </a>
+        </li>
+        {% endfor %}
+        {% if type === "raw" %}
+        <li>
+           <span>Raw</span>
+        </li> 
+        {% endif %}
+        {% if type === "revision" %}
+        <li>
+           <span>Revisions</span>
+        </li> 
+        {% endif %}
+    </ul>
+</nav>

@@ -1,23 +1,15 @@
 {% extends "./__base.html" %}
 
 {% block main %}
-  <nav>
-    <ul>
-      {% for node in entity.hierarchy %}
-        <li>
-          <a data-entity-type="{{ node.type }}" href="{%- if node.name === "ROOT" -%}/ROOT{%- else -%}/{{ node.uri }}{%- endif -%}" title="{{ node.name }}">
-            {%- if node.name === "ROOT" -%}Root
-            {%- else -%}
-              {{ node.name }}
-            {%- endif -%}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-  </nav>
+  {% include "./__hierarchy.html" %}
+
   <h1>{{ entity.name }}</h1>
+
+  {# This is an article #}
   {% if entity.type === "article" or entity.type === "home" %}
     <article>{{ entity.html | safe }}</article>
+
+  {# This is a folder #}
   {% else %}
     {% if entity.readme %}
       <div class="readme">{{ entity.readme.html | safe }}</div>
@@ -34,6 +26,7 @@
         </li>
       {% endfor %}
     </ul>
+
     <h2>Articles
       <span>{{ entity.children.articles | length }}</span>
     </h2>

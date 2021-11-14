@@ -75,9 +75,16 @@ h2 > span {
   padding: 0.125em 0.5em;
   vertical-align: middle;
 }
-h1 > span + span,
-h2 > span + span {
-  margin-left: calc(var(--root-spacing) / 2);
+
+.container.raw main h1 span:nth-of-type(2) a {
+  color: white;
+  text-decoration: none;
+}
+.container.raw main h1 span:nth-of-type(2) {
+  background-color: var(--color-black);
+}
+.container.raw main h1 span:nth-of-type(2):hover {
+  background-color: var(--color-highlight-light);
 }
 
 .container header > h1 {
@@ -106,6 +113,7 @@ main h1 {
 main nav {
   font-size: small;
   margin-top: 1em;
+  color: var(--color-grey-light);
 }
 main nav a {
   color: var(--color-grey);

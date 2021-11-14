@@ -368,6 +368,36 @@ export const createRawArticle = async (bock: Bock, article: Article) => {
   );
 };
 
+export const createRevision = async (
+  bock: Bock,
+  article: Article,
+): Promise<void> => {
+  const { outputFolder, prettify } = bock;
+
+  try {
+    await mkdir(`${outputFolder}/${article.uri}/revisions`);
+  } catch (error) {
+    if (!(error as Error).message.includes("EEXIST")) {
+      console.log(`Error creating revisions folder: ${article.uri}`);
+    }
+  }
+
+  await writeFile(
+    `${outputFolder}/${article.uri}/revisions/index.html`,
+    render({
+      template: `${__dirname}/templates/revision.html`,
+      variables: {
+        type: "revision",
+        name: article.name,
+        uri: article.uri,
+
+        entity: article,
+      },
+      prettify,
+    }),
+  );
+};
+
 export const createSingleEntity = async (
   bock: Bock,
   entity: Entity,
@@ -455,6 +485,7 @@ export const createSingleEntity = async (
 
   if (entity.type === "article") {
     await createRawArticle(bock, data);
+    await createRevision(bock, data);
   }
 };
 
