@@ -16,6 +16,9 @@
   --color-grey: #999;
   --color-highlight: #ff3300;
   --color-highlight-light: #ff0000;
+
+  /* Other */
+  --transition-duration: 0.25s;
 }
 
 html,
@@ -74,6 +77,10 @@ h2 > span {
   min-width: 0.8em;
   padding: 0.125em 0.5em;
   vertical-align: middle;
+}
+
+.container {
+  animation: fadeIn var(--transition-duration) ease-in-out;
 }
 
 .container.raw main h1 span:nth-of-type(2) a {
@@ -319,6 +326,15 @@ header nav ul li a.active {
   }
   to {
     transform: rotate(359deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
