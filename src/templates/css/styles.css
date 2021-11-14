@@ -37,6 +37,7 @@ pre,
 code {
   font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console,
     monospace;
+  font-size: 95%;
 }
 
 a {

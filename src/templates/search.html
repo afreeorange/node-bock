@@ -1,58 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    {% include "./__head.html" %}
-    <title>Search Articles</title>
-  </head>
-  <body>
-    {% include "./__noscript.html" %}
-    <div class="container articles">
-      <header>
-        <nav>
-          <ul>
-            <li>
-              <a href="/search" class="active"><span>Search</span></a>
-            </li>
-            <li>
-              <a href="/Hello"><span>Home</span></a>
-            </li>
-            <li>
-              <a href="/random"><span>Random</span></a>
-            </li>
-          </ul>
-        </nav>
-        <h1>Search Articles <span>{{ articles | length }}</span></h1>
-      </header>
-      <main>
-        <form role="search">
-          <input placeholder="2 or more characters" autofocus />
-        </form>
-        <div data-content="results"></div>
-        <ul data-content="list-of-articles">
-          {% for article in articles %}
-          <li>
-            <a href="/{{ article.uri }}" title="Read {{ article.name }}">
-              {{ article.path | replace(".md", "") | replace("/", " &rarr; ") |
-              safe }}
-            </a>
-          </li>
-          {% endfor %}
-        </ul>
-      </main>
-      <footer>
-        <ul>
-          <li>
-            <a
-              href="https://github.com/afreeorange/bock"
-              title="Link to this project on Github"
-              >{{ name }} v{{ version }}</a
-            >
-          </li>
-        </ul>
-      </footer>
-    </div>
-    <script src="/js/nunjucks.min.js"></script>
-    <script src="/js/sql-wasm.js"></script>
-    <script src="/js/search.js"></script>
-  </body>
-</html>
+{% extends "./__base.html" %}
+
+{% block main %}
+<h1>Search Articles <span>{{ articles | length }}</span></h1>
+<form role="search">
+  <input type="search" placeholder="3 or more characters" autofocus />
+</form>
+<div data-content="results"></div>
+<ul data-content="list-of-articles">
+  {% for article in articles %}
+  <li>
+    <a href="/{{ article.uri }}" title="Read {{ article.name }}">
+      {{ article.path | replace(".md", "") | replace("/", " &rarr; ") |
+      safe }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% endblock main %}
+
+{% block script %}
+<script src="/js/nunjucks.min.js"></script>
+<script src="/js/sql-wasm.js"></script>
+<script src="/js/search.js"></script>
+{% endblock script %}

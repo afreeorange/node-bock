@@ -4,6 +4,7 @@ import formatDate from "date-fns/format";
 import beautify from "js-beautify";
 
 import { BEAUTIFY_OPTIONS } from "./constants";
+import packageInfo from "../package.json";
 
 const renderer = nunjucks.configure({});
 renderer.addFilter("numeral", (number: string, format: string) => {
@@ -21,9 +22,9 @@ export const render = ({
   prettify,
 }: {
   template: string;
-  variables: Record<string, any>;
+  variables: TemplateVariables;
   prettify: boolean;
 }) => {
-  const rendered = renderer.render(template, variables);
+  const rendered = renderer.render(template, { ...variables, packageInfo });
   return prettify ? beautify.html(rendered, BEAUTIFY_OPTIONS) : rendered;
 };

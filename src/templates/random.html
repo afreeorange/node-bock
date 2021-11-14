@@ -1,54 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    {% include "./__head.html" %}
-    <title>{{ entity.name }}</title>
-  </head>
-  <body>
-    {% include "./__noscript.html" %}
-    <div class="container {{ type }}">
-      <header>
-        <nav>
-          <ul>
-            <li>
-              <a href="/search"><span>Search</span></a>
-            </li>
-            <li>
-              <a href="/Hello"><span>Home</span></a>
-            </li>
-            <li>
-              <a href="/random" class="active"><span>Random</span></a>
-            </li>
-          </ul>
-        </nav>
-      </header>
-      <main>
-        <noscript> You'll sadly need JavaScript for this&hellip; </noscript>
-      </main>
-      <footer>
-        <ul>
-          <li>
-            <a
-              href="https://github.com/afreeorange/bock"
-              title="Link to this project on Github"
-              >{{ name }} v{{ version }}</a
-            >
-          </li>
-        </ul>
-      </footer>
-    </div>
-    <script type="text/javascript">
-      (() => {
-        const URIs = [
-          {%- for entity in listOfEntities %}
-          "{{ entity.uri }}",
-          {%- endfor %}
-        ];
+{% extends "./__base.html" %}
 
-        setTimeout(() => {
-          window.location.href = `/${URIs[Math.floor(Math.random() * URIs.length)]}`;
-        }, 1000);
-      })();
-    </script>
-  </body>
-</html>
+{% block script %}
+<script type="text/javascript">
+  (() => {
+    const URIs = [
+      {%- for entity in listOfEntities %}
+      "{{ entity.uri }}",
+      {%- endfor %}
+    ];
+
+    setTimeout(() => {
+      window.location.href = `/${URIs[Math.floor(Math.random() * URIs.length)]}`;
+    }, 1000);
+  })();
+</script>
+{% endblock script %}

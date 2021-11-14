@@ -19,8 +19,6 @@ import {
 } from "./constants";
 import parser from "./parser";
 
-import packageJson from "../package.json";
-
 export const wordCount = (articleText: string): number =>
   articleText.split(" ").length;
 
@@ -110,10 +108,11 @@ export const createSearch = async (bock: Bock) => {
     render({
       template: `${__dirname}/templates/search.html`,
       variables: {
-        articles: listOfEntities,
-        version: packageJson.version,
-        name: packageJson.name,
         type: "search",
+        name: "Search Articles",
+        uri: "/search",
+
+        articles: listOfEntities,
       },
       prettify,
     }),
@@ -166,7 +165,7 @@ export const createHome = async (bock: Bock) => {
     name: "Hello",
     path: "Hello.md",
     sizeInBytes: 0,
-    type: "article",
+    type: "home",
     uri: "Hello",
     source,
     wordCount: wordCount(source),
@@ -181,10 +180,11 @@ export const createHome = async (bock: Bock) => {
     render({
       template: `${__dirname}/templates/entity.html`,
       variables: {
+        type: "home",
+        name: entity.name,
+        uri: "/Hello",
+
         entity,
-        version: packageJson.version,
-        name: packageJson.name,
-        type: entity.type,
       },
       prettify,
     }),
@@ -233,10 +233,11 @@ export const createEntity = async (bock: Bock, entity: Entity) => {
     render({
       template: `${__dirname}/templates/entity.html`,
       variables: {
-        entity,
-        version: packageJson.version,
-        name: packageJson.name,
         type: entity.type,
+        name: entity.name,
+        uri: entity.uri,
+
+        entity,
       },
       prettify,
     }),
@@ -296,10 +297,11 @@ export const createRoot = async (bock: Bock) => {
     render({
       template: `${__dirname}/templates/entity.html`,
       variables: {
+        type: "folder",
+        name: entity.name,
+        uri: entity.uri,
+
         entity,
-        version: packageJson.version,
-        name: packageJson.name,
-        type: entity.type,
       },
       prettify,
     }),
@@ -325,10 +327,11 @@ export const createRandom = async ({
     render({
       template: `${__dirname}/templates/random.html`,
       variables: {
-        listOfEntities,
-        version: packageJson.version,
-        name: packageJson.name,
         type: "random",
+        name: "Random Article",
+        uri: "/random",
+
+        listOfEntities,
       },
       prettify,
     }),
@@ -351,13 +354,14 @@ export const createRawArticle = async (bock: Bock, article: Article) => {
     render({
       template: `${__dirname}/templates/raw.html`,
       variables: {
+        type: "raw",
+        name: article.name,
+        uri: article.uri,
+
         entity: article,
         raw: highlight.highlight(article.source!, {
           language: "markdown",
         }).value,
-        version: packageJson.version,
-        name: packageJson.name,
-        type: "raw",
       },
       prettify,
     }),
@@ -466,6 +470,7 @@ export const createEntities = async (bock: Bock): Promise<void> => {
 
   for await (const e of listOfEntities) {
     await createSingleEntity(bock, e);
+
     bar.increment({
       entity: e.name,
     });

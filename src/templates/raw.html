@@ -1,50 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    {% include "./__head.html" %}
-    <title>{{ entity.name }}</title>
-  </head>
-  <body>
-    {% include "./__noscript.html" %}
-    <div class="container {{ type }}" data-entity-uri="{{ entity.uri }}">
-      <header>
-        <nav>
-          <ul>
-            <li><a href="/search"><span>Search</span></a></li>
-            <li><a href="/Hello"><span>Home</span></a></li>
-            <li><a href="/random"><span>Random</span></a></li>
-            <li><a href="/{{ entity.uri }}/raw" class="active"><span>Raw</span></a></li>
-            <li><a href="/{{ entity.uri }}/revisions"><span>Revisions</span></a></li>
-          </ul>
-        </nav>
-      </header>
-      <main>
-        <nav>
-          <ul>
-            {% for node in entity.hierarchy %}
-            <li>
-              <a data-entity-type="{{ node.type }}" href="{%- if node.name === "ROOT" -%}/ROOT{%- else -%}/{{ node.uri }}{%- endif -%}" title="{{ node.name }}">
-                {%- if node.name === "ROOT" -%}Root{%- else -%}{{ node.name}}{%- endif -%}
-              </a>
-            </li>
-            {% endfor %}
-          </ul>
-        </nav>
-        <h1>{{ entity.name }} <span>Raw</span></h1>
-        <pre>
+{% extends "./__base.html" %}
+
+{% block main %}
+<nav>
+  <ul>
+    {% for node in entity.hierarchy %}
+    <li>
+      <a data-entity-type="{{ node.type }}" href="{%- if node.name === "ROOT" -%}/ROOT{%- else -%}/{{ node.uri }}{%- endif -%}" title="{{ node.name }}">
+        {%- if node.name === "ROOT" -%}Root{%- else -%}{{ node.name}}{%- endif -%}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</nav>
+<h1>{{ entity.name }} <span>Raw</span></h1>
+<pre>
 <code>{{ raw | safe }}</code>
-        </pre>
-      </main>
-      <footer>
-        <ul>
-          {% if entity.sizeInBytes != 0 %}
-          <li>{{ entity.sizeInBytes | numeral("0,0") }} bytes</li>
-          {% endif %}
-          <li>Created {{ entity.created }}</li>
-          <li>Modified {{ entity.modified }}</li>
-          <li><a href="https://github.com/afreeorange/bock" title="Link to this project on Github">{{ name }} v{{ version }}</a></li>
-        </ul>
-      </footer>
-    </div>
-  </body>
-</html>
+</pre>
+{% endblock main %}

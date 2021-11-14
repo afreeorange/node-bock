@@ -1,81 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    {% include "./__head.html" %}
-    <title>{{ entity.name }}</title>
-  </head>
-  <body>
-    {% include "./__noscript.html" %}
-    <div class="container {{ type }}" data-entity-uri="{{ entity.uri }}">
-      <header>
-        <nav>
-          <ul>
-            <li><a href="/search"><span>Search</span></a></li>
-            <li><a href="/Hello"><span>Home</span></a></li>
-            <li><a href="/random"><span>Random</span></a></li>
-            {% if entity.type !== "folder" %}
-            <li><a href="/{{ entity.uri }}/raw"><span>Raw</span></a></li>
-            <li><a href="/{{ entity.uri }}/revisions"><span>Revisions</span></a></li>
-            {% endif %}
-          </ul>
-        </nav>
-      </header>
-      <main>
-        <nav>
-          <ul>
-            {% for node in entity.hierarchy %}
-            <li>
-              <a data-entity-type="{{ node.type }}" href="{%- if node.name === "ROOT" -%}/ROOT{%- else -%}/{{ node.uri }}{%- endif -%}" title="{{ node.name }}">
-                {%- if node.name === "ROOT" -%}Root{%- else -%}{{ node.name}}{%- endif -%}
-              </a>
-            </li>
-            {% endfor %}
-          </ul>
-        </nav>
-        <h1>{{ entity.name }}</h1>
-        {% if entity.type === "article" %}
-        <article>{{ entity.html | safe }}</article>
-        {% else %} {% if entity.readme %}
-        <div class="readme">{{ entity.readme.html | safe }}</div>
-        {% endif %}
+{% extends "./__base.html" %}
 
-        <h2>Folders <span>{{ entity.children.folders | length }}</span></h2>
-        <ul>
-          {% for child in entity.children.folders %}
-          <li>
-            <a href="/{{ child.uri }}" title="{{ child.name }}">
-              {{ child.name }}
-            </a>
-          </li>
-          {% endfor %}
-        </ul>
-
-        <h2>Articles <span>{{ entity.children.articles | length }}</span></h2>
-        <ul>
-          {% for child in entity.children.articles %}
-          <li>
-            <a href="/{{ child.uri }}" title="{{ child.name }}">
-              {{ child.name }}
-            </a>
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-      </main>
-      <footer>
-        <ul>
-          {% if entity.sizeInBytes != 0 %}
-          <li>{{ entity.sizeInBytes | numeral("0,0") }} bytes</li>
-          {% endif %}
-          {% if entity.created %}
-          <li>Created on {{ entity.created | date("PPPP 'at' h:mm bbb") }}</li>
-          {% endif %}
-          {% if entity.modified %}
-          <li>Modified on {{ entity.modified | date("PPPP 'at' h:mm bbb") }}</li>
-          {% endif %}
-          <li><a href="https://github.com/afreeorange/bock" title="Link to this project on Github">{{ name }} v{{ version }}</a></li>
-        </ul>
-      </footer>
-    </div>
-  </body>
-</html>
+{% block main %}
+  <nav>
+    <ul>
+      {% for node in entity.hierarchy %}
+        <li>
+          <a data-entity-type="{{ node.type }}" href="{%- if node.name === "ROOT" -%}/ROOT{%- else -%}/{{ node.uri }}{%- endif -%}" title="{{ node.name }}">
+            {%- if node.name === "ROOT" -%}Root
+            {%- else -%}
+              {{ node.name }}
+            {%- endif -%}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+  <h1>{{ entity.name }}</h1>
+  {% if entity.type === "article" or entity.type === "home" %}
+    <article>{{ entity.html | safe }}</article>
+  {% else %}
+    {% if entity.readme %}
+      <div class="readme">{{ entity.readme.html | safe }}</div>
+    {% endif %}
+    <h2>Folders
+      <span>{{ entity.children.folders | length }}</span>
+    </h2>
+    <ul>
+      {% for child in entity.children.folders %}
+        <li>
+          <a href="/{{ child.uri }}" title="{{ child.name }}">
+            {{ child.name }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+    <h2>Articles
+      <span>{{ entity.children.articles | length }}</span>
+    </h2>
+    <ul>
+      {% for child in entity.children.articles %}
+        <li>
+          <a href="/{{ child.uri }}" title="{{ child.name }}">
+            {{ child.name }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock main %}

@@ -55,3 +55,21 @@ type Bock = {
   listOfPaths: string[];
   prettify: boolean;
 };
+
+type TemplateVariables = {
+  name: string;
+  type:
+    | "article"
+    | "folder"
+    | "search"
+    | "raw"
+    | "revision"
+    | "compare"
+    | "home"
+    | "random";
+  uri: string;
+  packageInfo?: {
+    name: string;
+    version: string;
+  };
+} & Record<string, any>;
