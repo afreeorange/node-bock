@@ -182,7 +182,6 @@ footer ul {
 footer a {
   text-decoration: none;
   color: var(--color-grey);
-  border-bottom: 1px dotted var(--color-grey-light);
 }
 footer li a::before {
   width: 1em;
@@ -190,9 +189,9 @@ footer li a::before {
   content: "";
   display: inline-block;
 
-  background-color: var(--color-grey);
+  background-color: var(--color-highlight);
   vertical-align: middle;
-  margin-right: 0.5em;
+  margin-right: 0.25em;
 
   -webkit-mask-image: url(/img/bock.svg);
   mask-image: url(/img/bock.svg);
