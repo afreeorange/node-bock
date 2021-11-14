@@ -45,6 +45,11 @@
               <a href="/{{ entity.uri }}/revisions"{% if type === "revision" %}class="active"{% endif %}><span>Revisions</span></a>
             </li>
             {% endif %}
+            {% if type === "article" or type === "folder" or type === "raw" or type === "revision" %}
+            <li>
+              <a href="/{{ entity.uri }}/index.json"><span>JSON</span></a>
+            </li>
+            {% endif %}
           </ul>
         </nav>
       </header>
@@ -53,7 +58,7 @@
       </main>
       <footer>
         <ul>
-          {% if type === "article" or type === "home" %}
+          {% if type === "article" or type === "home" or type === "raw" %}
             {% if entity.sizeInBytes != 0 %}
               <li>{{ entity.sizeInBytes | numeral("0,0") }} bytes</li>
             {% endif %}

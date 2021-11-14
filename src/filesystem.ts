@@ -306,6 +306,11 @@ export const createRoot = async (bock: Bock) => {
       prettify,
     }),
   );
+
+  await writeFile(
+    `${outputFolder}/ROOT/index.json`,
+    JSON.stringify(entity, null, JSON_PADDING),
+  );
 };
 
 export const createRandom = async ({

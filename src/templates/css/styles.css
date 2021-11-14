@@ -216,32 +216,31 @@ div[data-content="results"] {
   overflow-x: hidden;
 }
 
-div[data-content="results"] ul,
-ul[data-content="list-of-articles"] {
+.container.search main ul {
   margin: var(--root-spacing) 0;
   padding: 0;
 }
 
-div[data-content="results"] ul a,
-ul[data-content="list-of-articles"] a {
+.container.search main ul a {
   color: var(--color-black);
   text-decoration: none;
 }
 
-div[data-content="results"] ul a:hover,
-ul[data-content="list-of-articles"] a:hover {
+.container.search main ul a:hover {
   color: var(--color-highlight);
   text-decoration: underline;
 }
 
-div[data-content="results"] ul li,
-ul[data-content="list-of-articles"] li {
+.container.search main ul li {
   padding: 0.25em;
   list-style-type: none;
 }
 
-div[data-content="results"] ul li:nth-child(2n),
-ul[data-content="list-of-articles"] li:nth-child(2n) {
+.container.search main ul li small {
+  color: var(--color-grey);
+}
+
+.container.search main ul li:nth-child(2n) {
   border-top: 1px dotted var(--color-grey-light);
   border-bottom: 1px dotted var(--color-grey-light);
 }

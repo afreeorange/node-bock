@@ -19,24 +19,26 @@ const REMOTE_DATABASE = "/entities.db";
   const db = new SQL.Database(new Uint8Array(buf));
 
   const renderer = nunjucks.configure({});
+  renderer.addFilter("markMatch", (path) =>
+    path.replace(/\>\>\>/g, "<mark>").replace(/\<\<\</g, "</mark>"),
+  );
   renderer.addFilter("arrowPath", (path) =>
-    path.replace(".md", "").replace(/\|/g, " &rarr; "),
+    path.replace(".md", "").replace(/\//g, " &rarr; "),
   );
 
   const template = `
-    <ul>
-      {% for row in rows %}
-      <li>
-        <p>
-          <strong><a href="/{{ row.uri }}" title="{{ row.name }}">{{ row.highlightedPath | arrowPath | safe }}</a></strong>
-        </p>
-        <p>
-          {{ row.content | safe }}
-        </p>
-      </li>
-      {% endfor %}
-    </ul>
-  `;
+     <ul>
+       {% for row in rows %}
+       <li>
+         <a href="/{{ row.uri }}" title="{{ row.name }}">{{ row.highlightedPath | arrowPath | markMatch | safe }}</a>
+         <br />
+         <small>
+           {{ row.content | markMatch | safe }}
+         </small>
+       </li>
+       {% endfor %}
+     </ul>
+   `;
 
   const resultsSection = document.querySelector(`[data-content="results"]`);
   const listSection = document.querySelector(
@@ -51,28 +53,25 @@ const REMOTE_DATABASE = "/entities.db";
     if (term && term.length >= 3) {
       // https://sqlite.org/forum/info/00d53dbed15f5e5a
       const thingSearchStatement = db.prepare(`
-          SELECT 
-            uri,
-            name,
-            highlight(articles_fts, 6, '<mark>', '</mark>') as highlightedPath,
-            snippet(articles_fts, 1, '<mark>', '</mark>', '...', 50) as content,
-            path
-          FROM articles_fts
-          WHERE articles_fts MATCH 'path:${term}* OR content:${term}*'
-          ORDER BY RANK
-          LIMIT 100
-          `);
+           SELECT
+             uri,
+             name,
+             highlight(articles_fts, 6, '>>>', '<<<') as highlightedPath,
+             snippet(articles_fts, 1, '>>>', '<<<', '...', 50) as content,
+             path
+           FROM articles_fts
+           WHERE articles_fts MATCH 'path:${term}* OR content:${term}*'
+           ORDER BY RANK
+           LIMIT 100
+           `);
 
       let rows = [];
       while (thingSearchStatement.step()) {
         const row = thingSearchStatement.getAsObject();
-        /**
-         * Can't have the Nunjucks filter use a slash because we're using
-         * the <mark></mark> tags to show highlights. Make the path delimiter
-         * something else and let the filter use that instead.
-         */
-        rows.push({ ...row, path: row.path.replace(/\//g, "|") });
+        rows.push(row);
       }
+
+      console.log(rows);
 
       thingSearchStatement.free();
 
