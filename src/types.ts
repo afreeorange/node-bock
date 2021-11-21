@@ -1,17 +1,3 @@
-/**
-  new, untracked
-  added, staged
-  added, staged, with unstaged changes
-  unmodified
-  modified, unstaged
-  modified, staged
-  modified, staged, with unstaged changes
-  deleted, unstaged
-  deleted, staged
- */
-
-// export type Status = "clean" | "dirty";
-
 type EntityType = "article" | "folder";
 
 type EntityHierarchy = {
@@ -34,39 +20,42 @@ type Entity = {
 };
 
 type Folder = Entity & {
-  children?: any[];
-  readme?: null | string;
+  children: any[];
+  readme: null | string;
 };
 
 type Article = Entity & {
-  source?: string;
-  wordCount?: number;
-  excerpt?: string;
-  html?: string;
-  uncommitted?: boolean;
-  revisions?: string[];
+  source: string;
+  wordCount: number;
+  excerpt: string;
+  html: string;
+  uncommitted: boolean;
+  revisions: string[];
 };
 
 type Bock = {
   articleRoot: string;
-  outputFolder: string;
   entities: Record<string, Entity>;
+  outputFolder: string;
   listOfEntities: Entity[];
   listOfPaths: string[];
   prettify: boolean;
 };
 
+/**
+ * These are supplied to all templates.
+ */
 type TemplateVariables = {
   name: string;
   type:
     | "article"
+    | "compare"
     | "folder"
-    | "search"
+    | "home"
+    | "random"
     | "raw"
     | "revision"
-    | "compare"
-    | "home"
-    | "random";
+    | "search";
   uri: string;
   packageInfo?: {
     name: string;

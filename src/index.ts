@@ -3,20 +3,19 @@
 import { writeFile } from "fs/promises";
 
 import chokidar from "chokidar";
-import chalk from "chalk";
 
 import CLI from "./cli";
 import {
   createEntities,
   createSingleEntity,
-  getEntities,
   copyAssets,
   createHome,
   createSearch,
   createRoot,
   createRandom,
-} from "./filesystem";
+} from "./writers";
 import { createDatabase } from "./database";
+import { getEntities } from "./readers";
 
 (async () => {
   CLI.parse(process.argv);
@@ -68,10 +67,7 @@ import { createDatabase } from "./database";
 
     watcher.on("change", async (path) => {
       let _path = path.replace(`${articleRoot}/`, "");
-
-      console.log(
-        chalk.yellow(`${chalk.green(_path)} changed... re-rendering`),
-      );
+      console.log(`${_path} changed... re-rendering`);
 
       await createSingleEntity(bock, entities[_path]);
     });

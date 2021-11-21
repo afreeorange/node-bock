@@ -1,6 +1,6 @@
 {
   "name": "bock",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": "Nikhil Anand <mail@nikhil.io> (https://nikhil.io)",
   "license": "MIT",
   "main": "./dist/src/index.js",
@@ -10,7 +10,9 @@
   "scripts": {
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "tsc -p . && mkdir dist/src/templates && cp -rv src/templates/* dist/src/templates/",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "create-single-executable": "nexe --output bock --build dist/src/index.js",
+    "exe": "npx ts-node -T src/index.ts"
   },
   "dependencies": {
     "chalk": "^4.1.2",

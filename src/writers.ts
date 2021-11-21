@@ -1,107 +1,25 @@
-import { extname } from "path";
-import { mkdir, writeFile, readFile, stat } from "fs/promises";
+import { writeFile, readFile, stat } from "fs/promises";
 
 import { copy } from "fs-extra";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
-import fg from "fast-glob";
 import highlight from "highlight.js";
 
 import { render } from "./renderer";
 import {
   ASSETS_FOLDER,
-  ENTITIES_TO_IGNORE,
   HOME_PAGE_DOCUMENT,
   JSON_PADDING,
-  MAX_DEPTH,
-  ROOT_NODE_NAME,
   UUID_NAMESPACE,
 } from "./constants";
 import parser from "./parser";
-
-export const wordCount = (articleText: string): number =>
-  articleText.split(" ").length;
-
-export const maybeReadme = async (articleRoot: string, entity: Entity) => {
-  let ret: {
-    source: string;
-    html: string;
-  } | null;
-
-  try {
-    let source = (
-      await readFile(`${articleRoot}/${entity.path}/README.md`)
-    ).toString();
-
-    let html = parser.render(source);
-
-    ret = {
-      source,
-      html,
-    };
-  } catch (e) {
-    ret = null;
-  }
-
-  return ret;
-};
-
-export const generateIdFrom = (articleRoot: string, articlePath: string) =>
-  uuidv5(`${articleRoot}/${articlePath}`, UUID_NAMESPACE);
-
-export const generatePrettyPath = (entityPath: string) =>
-  entityPath.replace(/\s+/g, "_");
-
-export const removeExtension = (articlePath: string) =>
-  articlePath.replace(extname(articlePath), "");
-
-export const generateHierarchyFrom = (
-  articleRoot: string,
-  articlePath: string,
-): EntityHierarchy[] => {
-  const initialList = [
-    ROOT_NODE_NAME,
-    ...articlePath
-      .replace(articleRoot, "")
-      .split("/")
-      .filter((p) => p !== ""),
-  ].map((e) => ({
-    name: removeExtension(e),
-    type: extname(e).toLowerCase().includes("md") ? "article" : "folder",
-    uri: removeExtension(generatePrettyPath(e.replace(`${articleRoot}/`, ""))),
-  }));
-
-  let finalList: any[] = [
-    {
-      ...initialList[0],
-      uri: "",
-    },
-  ];
-
-  for (let i = 1; i < initialList.length; i++) {
-    finalList.push({
-      name: initialList[i].name,
-      type: initialList[i].type,
-      uri: initialList
-        .slice(1, i + 1)
-        .map((_) => _.uri)
-        .reduce((a, v) => a + "/" + v),
-    });
-  }
-
-  return finalList;
-};
+import { mkdirp, wordCount } from "./helpers";
+import { getEntities, getReadme } from "./readers";
 
 export const createSearch = async (bock: Bock) => {
   const { outputFolder, listOfEntities, prettify } = bock;
 
-  try {
-    await mkdir(`${outputFolder}/search`);
-  } catch (error) {
-    if (!(error as Error).message.includes("EEXIST")) {
-      console.log(`Error creating articles folder: ${error}`);
-    }
-  }
+  await mkdirp(`${outputFolder}/search`);
 
   await writeFile(
     `${outputFolder}/search/index.html`,
@@ -135,13 +53,7 @@ export const createHome = async (bock: Bock) => {
   } else {
     source = `(Could not find a \`${HOME_PAGE_DOCUMENT}\`. You should make one!)`;
 
-    try {
-      await mkdir(`${outputFolder}/Hello`);
-    } catch (error) {
-      if (!(error as Error).message.includes("EEXIST")) {
-        console.error(`Problem creating ${outputFolder}/Hello: ${error}`);
-      }
-    }
+    await mkdirp(`${outputFolder}/Hello`);
   }
 
   html = parser.render(source);
@@ -246,6 +158,7 @@ export const createEntity = async (bock: Bock, entity: Entity) => {
 
 export const createRoot = async (bock: Bock) => {
   const { articleRoot, outputFolder, prettify } = bock;
+
   const rootEntities = Object.values(await getEntities(articleRoot, "", 1));
 
   const entity = {
@@ -284,13 +197,7 @@ export const createRoot = async (bock: Bock) => {
     },
   };
 
-  try {
-    await mkdir(`${outputFolder}/ROOT`);
-  } catch (error) {
-    if (!(error as Error).message.includes("EEXIST")) {
-      console.error(`Problem creating ${outputFolder}/ROOT: ${error}`);
-    }
-  }
+  await mkdirp(`${outputFolder}/ROOT`);
 
   await writeFile(
     `${outputFolder}/ROOT/index.html`,
@@ -318,13 +225,7 @@ export const createRandom = async ({
   outputFolder,
   prettify,
 }: Bock) => {
-  try {
-    await mkdir(`${outputFolder}/random`);
-  } catch (error) {
-    if (!(error as Error).message.includes("EEXIST")) {
-      console.error(`Problem creating ${outputFolder}/random: ${error}`);
-    }
-  }
+  await mkdirp(`${outputFolder}/random`);
 
   await writeFile(
     `${outputFolder}/random/index.html`,
@@ -346,13 +247,7 @@ export const createRandom = async ({
 export const createRawArticle = async (bock: Bock, article: Article) => {
   const { outputFolder, prettify } = bock;
 
-  try {
-    await mkdir(`${outputFolder}/${article.uri}/raw`);
-  } catch (error) {
-    if (!(error as Error).message.includes("EEXIST")) {
-      console.log(`Error creating raw entity folder: ${article.uri}`);
-    }
-  }
+  await mkdirp(`${outputFolder}/${article.uri}/raw`);
 
   await writeFile(
     `${outputFolder}/${article.uri}/raw/index.html`,
@@ -379,13 +274,7 @@ export const createRevision = async (
 ): Promise<void> => {
   const { outputFolder, prettify } = bock;
 
-  try {
-    await mkdir(`${outputFolder}/${article.uri}/revisions`);
-  } catch (error) {
-    if (!(error as Error).message.includes("EEXIST")) {
-      console.log(`Error creating revisions folder: ${article.uri}`);
-    }
-  }
+  await mkdirp(`${outputFolder}/${article.uri}/revisions`);
 
   await writeFile(
     `${outputFolder}/${article.uri}/revisions/index.html`,
@@ -408,6 +297,7 @@ export const createSingleEntity = async (
   entity: Entity,
 ): Promise<void> => {
   const { outputFolder, articleRoot } = bock;
+
   const {
     created,
     hierarchy,
@@ -420,15 +310,9 @@ export const createSingleEntity = async (
     uri,
   } = entity;
 
-  let entityToMake = `${outputFolder}/${uri}`;
+  const entityToMake = `${outputFolder}/${uri}`;
 
-  try {
-    await mkdir(entityToMake, { recursive: true });
-  } catch (error) {
-    if (!(error as Error).message.includes("EEXIST")) {
-      console.error(`Problem creating ${entityToMake}: ${error}`);
-    }
-  }
+  await mkdirp(entityToMake, { recursive: true });
 
   let data: any = {
     created,
@@ -477,7 +361,7 @@ export const createSingleEntity = async (
             uri: c.uri,
           })),
       },
-      readme: await maybeReadme(articleRoot, entity),
+      readme: await getReadme(bock, entity),
     };
   }
 
@@ -512,6 +396,9 @@ export const createEntities = async (bock: Bock): Promise<void> => {
     });
   }
 
+  /**
+   * This is the 'typical' way but the progress bar doesn't work...
+   */
   // await Promise.all(
   //   listOfEntities.map(async (e) => {
   //     await createSingleEntity(articleRoot, outputFolder, e);
@@ -534,47 +421,4 @@ export const copyAssets = async ({ articleRoot, outputFolder }: Bock) => {
   } catch (error) {
     console.log(`Could not copy assets: ${error}`);
   }
-};
-
-export const getEntities = async (
-  articleRoot: string,
-  prefix: string = "",
-  maxDepth: number = MAX_DEPTH,
-): Promise<Record<string, Entity>> => {
-  let ret: Record<string, Entity> = {};
-
-  (
-    await fg(`${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`, {
-      deep: maxDepth,
-      followSymbolicLinks: false,
-      ignore: ENTITIES_TO_IGNORE,
-      objectMode: true,
-      onlyFiles: false,
-      stats: true,
-    })
-  )
-    .filter(
-      (e) =>
-        (e.dirent.isFile() || e.dirent.isDirectory()) &&
-        !e.path.includes(ASSETS_FOLDER),
-    )
-    .map((e) => {
-      let path = e.path.replace(`${articleRoot}/`, "");
-
-      ret[path] = {
-        id: generateIdFrom(articleRoot, e.path),
-        created: e.stats!.ctime,
-        hierarchy: generateHierarchyFrom(articleRoot, e.path),
-        modified: e.stats!.mtime,
-        type: e.dirent.isFile() ? "article" : "folder",
-        sizeInBytes: e.stats!.size,
-        name: removeExtension(e.name),
-        uri: removeExtension(
-          generatePrettyPath(e.path.replace(`${articleRoot}/`, "")),
-        ),
-        path: e.path.replace(`${articleRoot}/`, ""),
-      };
-    });
-
-  return ret;
 };

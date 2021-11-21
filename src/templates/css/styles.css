@@ -31,11 +31,6 @@ body {
   padding: 0;
 }
 
-.container {
-  margin: 0 auto;
-  max-width: var(--max-width);
-}
-
 pre,
 code {
   font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console,
@@ -63,60 +58,82 @@ em {
   font-size: 110%;
 }
 
-/* BADGES */
-
-h1 > span,
-h2 > span {
-  background-color: var(--color-highlight-light);
-  border-radius: 2em;
-  color: white;
-  display: inline-flex;
-  font-size: 14px;
-  justify-content: center;
-  margin-bottom: 0.25em;
-  min-width: 0.8em;
-  padding: 0.125em 0.5em;
-  vertical-align: middle;
-}
-
-.container {
-  animation: fadeIn var(--transition-duration) ease-in-out;
-}
-
-.container.raw main h1 span:nth-of-type(2) a {
-  color: white;
-  text-decoration: none;
-}
-.container.raw main h1 span:nth-of-type(2) {
-  background-color: var(--color-black);
-}
-.container.raw main h1 span:nth-of-type(2):hover {
-  background-color: var(--color-highlight-light);
-}
-
-.container header > h1 {
-  margin-top: 0.4em;
-}
-
-.container.random main {
-  background-color: red;
-  width: 15em;
-  height: 15em;
-  margin: 3em auto;
-
+noscript {
   background-color: var(--color-highlight);
+  color: white;
+  width: 100%;
+  display: block;
+  font-size: small;
+  text-align: center;
+}
+
+/* Main navigation */
+
+header nav {
+  margin-top: 2em;
+  font-size: smaller;
+}
+header nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+header nav ul li {
+  display: inline-block;
+}
+header nav ul li:not(:last-child) {
+  margin-right: 1.5em;
+}
+header nav ul li a {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  background-color: var(--color-grey-light);
 
   mask-repeat: no-repeat;
   mask-position: center;
-  -webkit-mask-image: url(/img/twenty-die.svg);
-  mask-image: url(/img/twenty-die.svg);
-
-  animation: rotation 4s infinite cubic-bezier(1, 2.5, 0, 1.5);
+}
+header nav ul li a:hover {
+  background-color: var(--color-highlight);
+  transition: background-color 0.7s;
+}
+header nav ul li span {
+  display: none;
+}
+header nav ul li a[href="/search"] {
+  -webkit-mask-image: url(/img/search.svg);
+  mask-image: url(/img/search.svg);
+}
+header nav ul li a[href="/Hello"] {
+  -webkit-mask-image: url(/img/home.svg);
+  mask-image: url(/img/home.svg);
+}
+header nav ul li a[href="/random"] {
+  -webkit-mask-image: url(/img/random.svg);
+  mask-image: url(/img/random.svg);
+}
+header nav ul li a[href="/articles"] {
+  -webkit-mask-image: url(/img/articles.svg);
+  mask-image: url(/img/articles.svg);
+}
+header nav ul li a[href*="/raw"] {
+  -webkit-mask-image: url(/img/raw.svg);
+  mask-image: url(/img/raw.svg);
+}
+header nav ul li a[href*="/revisions"] {
+  -webkit-mask-image: url(/img/revisions.svg);
+  mask-image: url(/img/revisions.svg);
+}
+header nav ul li a[href*="/index.json"] {
+  -webkit-mask-image: url(/img/json.svg);
+  mask-image: url(/img/json.svg);
+}
+header nav ul li a.active {
+  background-color: var(--color-highlight);
 }
 
-main h1 {
-  color: var(--color-highlight);
-}
+/* Sub Navigation */
+
 main nav {
   font-size: small;
   margin-top: 1em;
@@ -180,36 +197,65 @@ main nav ul li:not(:last-child) a::after {
   -webkit-mask-position: center;
   mask-position: center;
 }
-main pre {
-  white-space: pre-wrap;
+
+/* Badges */
+
+h1 > span,
+h2 > span {
+  background-color: var(--color-highlight-light);
+  border-radius: 2em;
+  color: white;
+  display: inline-flex;
+  font-size: 14px;
+  justify-content: center;
+  margin-bottom: 0.25em;
+  min-width: 0.8em;
+  padding: 0.125em 0.5em;
+  vertical-align: middle;
 }
 
-footer {
-  color: var(--color-grey);
-  font-size: small;
-  margin: 4em 0;
+.container {
+  margin: 0 auto;
+  max-width: var(--max-width);
+  animation: fadeIn var(--transition-duration) ease-in-out;
 }
-footer ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+
+.container header > h1 {
+  margin-top: 0.4em;
 }
-footer a {
+
+.container.raw main h1 span:nth-of-type(2) a {
+  color: white;
   text-decoration: none;
-  color: var(--color-grey);
 }
-footer li a::before {
-  width: 1em;
-  height: 1em;
-  content: "";
-  display: inline-block;
+.container.raw main h1 span:nth-of-type(2) {
+  background-color: var(--color-black);
+}
+.container.raw main h1 span:nth-of-type(2):hover {
+  background-color: var(--color-highlight-light);
+}
+
+.container.random main {
+  background-color: red;
+  width: 15em;
+  height: 15em;
+  margin: 3em auto;
 
   background-color: var(--color-highlight);
-  vertical-align: middle;
-  margin-right: 0.25em;
 
-  -webkit-mask-image: url(/img/bock.svg);
-  mask-image: url(/img/bock.svg);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url(/img/twenty-die.svg);
+  mask-image: url(/img/twenty-die.svg);
+
+  animation: rotation 4s infinite cubic-bezier(1, 2.5, 0, 1.5);
+}
+
+main h1 {
+  color: var(--color-highlight);
+}
+main pre {
+  white-space: pre-wrap;
 }
 
 div[data-content="results"] {
@@ -255,69 +301,37 @@ main form[role="search"] input {
   width: 100%;
 }
 
-header nav {
-  margin-top: 2em;
-  font-size: smaller;
+/* Footer */
+
+footer {
+  color: var(--color-grey);
+  font-size: small;
+  margin: 4em 0;
 }
-header nav ul {
+footer ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
-header nav ul li {
-  display: inline-block;
+footer a {
+  text-decoration: none;
+  color: var(--color-grey);
 }
-header nav ul li:not(:last-child) {
-  margin-right: 1.5em;
-}
-header nav ul li a {
+footer li a::before {
+  width: 1em;
+  height: 1em;
+  content: "";
   display: inline-block;
-  width: 2em;
-  height: 2em;
-  background-color: var(--color-grey-light);
 
-  mask-repeat: no-repeat;
-  mask-position: center;
-}
-header nav ul li a:hover {
   background-color: var(--color-highlight);
-  transition: background-color 0.7s;
-}
-header nav ul li span {
-  display: none;
+  vertical-align: middle;
+  margin-right: 0.25em;
+
+  -webkit-mask-image: url(/img/bock.svg);
+  mask-image: url(/img/bock.svg);
 }
 
-header nav ul li a[href="/search"] {
-  -webkit-mask-image: url(/img/search.svg);
-  mask-image: url(/img/search.svg);
-}
-header nav ul li a[href="/Hello"] {
-  -webkit-mask-image: url(/img/home.svg);
-  mask-image: url(/img/home.svg);
-}
-header nav ul li a[href="/random"] {
-  -webkit-mask-image: url(/img/random.svg);
-  mask-image: url(/img/random.svg);
-}
-header nav ul li a[href="/articles"] {
-  -webkit-mask-image: url(/img/articles.svg);
-  mask-image: url(/img/articles.svg);
-}
-header nav ul li a[href*="/raw"] {
-  -webkit-mask-image: url(/img/raw.svg);
-  mask-image: url(/img/raw.svg);
-}
-header nav ul li a[href*="/revisions"] {
-  -webkit-mask-image: url(/img/revisions.svg);
-  mask-image: url(/img/revisions.svg);
-}
-header nav ul li a[href*="/index.json"] {
-  -webkit-mask-image: url(/img/json.svg);
-  mask-image: url(/img/json.svg);
-}
-header nav ul li a.active {
-  background-color: var(--color-highlight);
-}
+/* Responsive and Animations */
 
 @keyframes rotation {
   from {
@@ -341,13 +355,4 @@ header nav ul li a.active {
   :root {
     --max-width: 95%;
   }
-}
-
-noscript {
-  background-color: var(--color-highlight);
-  color: white;
-  width: 100%;
-  display: block;
-  font-size: small;
-  text-align: center;
 }

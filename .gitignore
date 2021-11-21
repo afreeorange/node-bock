@@ -1,5 +1,5 @@
-dist
-node_modules
 .DS_Store
-node-bock
+dist
 index-*
+node_modules
+node-bock

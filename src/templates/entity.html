@@ -1,43 +1,43 @@
 {% extends "./__base.html" %}
 
 {% block main %}
-  {% include "./__hierarchy.html" %}
+{% include "./__hierarchy.html" %}
 
-  <h1>{{ entity.name }}</h1>
+<h1>{{ entity.name }}</h1>
 
-  {# This is an article #}
-  {% if entity.type === "article" or entity.type === "home" %}
-    <article>{{ entity.html | safe }}</article>
+{# This is an article #}
+{% if entity.type === "article" or entity.type === "home" %}
+  <article>{{ entity.html | safe }}</article>
 
-  {# This is a folder #}
-  {% else %}
-    {% if entity.readme %}
-      <div class="readme">{{ entity.readme.html | safe }}</div>
-    {% endif %}
-    <h2>Folders
-      <span>{{ entity.children.folders | length }}</span>
-    </h2>
-    <ul>
-      {% for child in entity.children.folders %}
-        <li>
-          <a href="/{{ child.uri }}" title="{{ child.name }}">
-            {{ child.name }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-
-    <h2>Articles
-      <span>{{ entity.children.articles | length }}</span>
-    </h2>
-    <ul>
-      {% for child in entity.children.articles %}
-        <li>
-          <a href="/{{ child.uri }}" title="{{ child.name }}">
-            {{ child.name }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
+{# This is a folder #}
+{% else %}
+  {% if entity.readme %}
+    <div class="readme">{{ entity.readme.html | safe }}</div>
   {% endif %}
+  <h2>Folders
+    <span>{{ entity.children.folders | length }}</span>
+  </h2>
+  <ul>
+    {% for child in entity.children.folders %}
+      <li>
+        <a href="/{{ child.uri }}" title="{{ child.name }}">
+          {{ child.name }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <h2>Articles
+    <span>{{ entity.children.articles | length }}</span>
+  </h2>
+  <ul>
+    {% for child in entity.children.articles %}
+      <li>
+        <a href="/{{ child.uri }}" title="{{ child.name }}">
+          {{ child.name }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
 {% endblock main %}

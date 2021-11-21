@@ -11,7 +11,7 @@ export const BEAUTIFY_OPTIONS: HTMLBeautifyOptions = {
   wrap_line_length: 0,
 };
 export const ENTITIES_TO_IGNORE = [".git", "search"];
-export const HOME_PAGE_DOCUMENT = "Hello.md";
+export const HOME_PAGE_DOCUMENT = "Home.md";
 export const JSON_PADDING = 2;
 export const MAX_DEPTH = 6;
 export const ROOT_NODE_NAME = "ROOT";
