@@ -1,6 +1,6 @@
 # Bock
 
-A static wiki generator. WIP. [See it in action here](https://wiki.nikhil.io/Hello/). 
+A static wiki generator. WIP. [See it in action here](https://wiki.nikhil.io/Home/). 
 
 ```bash
 yarn exe --help
