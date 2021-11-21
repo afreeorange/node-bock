@@ -3,6 +3,8 @@ type EntityType = "article" | "folder";
 type EntityHierarchy = {
   name: string;
   type: EntityType;
+
+  // No trailing slashes!
   uri: string;
 };
 
@@ -43,7 +45,8 @@ type Bock = {
 };
 
 /**
- * These are supplied to all templates.
+ * Specify a few things that are supplied to all templates from the content
+ * writers.
  */
 type TemplateVariables = {
   name: string;

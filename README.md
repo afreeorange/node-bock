@@ -47,6 +47,11 @@ Exceptions
 
 ### Scratchpad
 
+```bash
+find . -type f -exec gzip -9 '{}' \; -exec mv '{}.gz' '{}' \;
+aws s3 sync . s3://wiki.nikhil.io/ --content-encoding gzip --delete --profile nikhil.io
+```
+
 ```javascript
 // serve(articleRoot);
 

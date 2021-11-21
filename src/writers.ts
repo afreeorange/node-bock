@@ -44,7 +44,7 @@ export const createHome = async (bock: Bock) => {
   let source;
   let stats;
 
-  if (Object.keys(entities).includes("Hello.md")) {
+  if (Object.keys(entities).includes(HOME_PAGE_DOCUMENT)) {
     source = (
       await readFile(`${articleRoot}/${HOME_PAGE_DOCUMENT}`)
     ).toString();
@@ -53,7 +53,7 @@ export const createHome = async (bock: Bock) => {
   } else {
     source = `(Could not find a \`${HOME_PAGE_DOCUMENT}\`. You should make one!)`;
 
-    await mkdirp(`${outputFolder}/Hello`);
+    await mkdirp(`${outputFolder}/Home`);
   }
 
   html = parser.render(source);
@@ -67,18 +67,18 @@ export const createHome = async (bock: Bock) => {
         uri: "",
       },
       {
-        name: "Hello",
+        name: "Home",
         type: "article",
-        uri: "Hello",
+        uri: "Home",
       },
     ],
     id: uuidv5(`/${HOME_PAGE_DOCUMENT}`, UUID_NAMESPACE),
     modified: stats ? stats.mtime : null,
-    name: "Hello",
-    path: "Hello.md",
+    name: "Home",
+    path: HOME_PAGE_DOCUMENT,
     sizeInBytes: 0,
     type: "home",
-    uri: "Hello",
+    uri: "Home",
     source,
     wordCount: wordCount(source),
     excerpt: "",
@@ -88,13 +88,13 @@ export const createHome = async (bock: Bock) => {
   };
 
   await writeFile(
-    `${outputFolder}/Hello/index.html`,
+    `${outputFolder}/Home/index.html`,
     render({
       template: `${__dirname}/templates/entity.html`,
       variables: {
         type: "home",
         name: entity.name,
-        uri: "/Hello",
+        uri: "/Home",
 
         entity,
       },
@@ -108,7 +108,7 @@ export const createHome = async (bock: Bock) => {
 <html>
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0;url=/Hello" />
+    <meta http-equiv="refresh" content="0;url=/Home" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -130,7 +130,7 @@ export const createHome = async (bock: Bock) => {
     </style>
   </head>
   <body>
-    <div><a href="/Hello">Click here</a> if you are not redirected&hellip;</div>
+    <div><a href="/Home">Click here</a> if you are not redirected&hellip;</div>
   </body>
 </html>  
   `,
