@@ -15,6 +15,7 @@ import {
 import parser from "./parser";
 import { mkdirp, wordCount } from "./helpers";
 import { getEntities, getReadme } from "./readers";
+import { Article, Bock, Entity } from "./types";
 
 export const createSearch = async (bock: Bock) => {
   const { outputFolder, listOfEntities, prettify } = bock;
@@ -38,7 +39,8 @@ export const createSearch = async (bock: Bock) => {
 };
 
 export const createHome = async (bock: Bock) => {
-  const { entities, articleRoot, outputFolder, prettify } = bock;
+  const { entities, articleRoot, outputFolder, prettify, listOfEntities } =
+    bock;
 
   let html;
   let source;
@@ -97,6 +99,7 @@ export const createHome = async (bock: Bock) => {
         uri: "/Home",
 
         entity,
+        recent: listOfEntities.slice(0, 10),
       },
       prettify,
     }),

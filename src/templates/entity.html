@@ -9,6 +9,19 @@
 {% if entity.type === "article" or entity.type === "home" %}
   <article>{{ entity.html | safe }}</article>
 
+  {% if entity.type === "home" %}
+    <h2>Recent Articles</h2>
+    <ul>
+    {% for entity in recent %}
+      <li>
+        <a href="/{{ entity.uri  }}" title="{{ entity.name }}">
+          {{ entity.name }}
+        </a>
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+
 {# This is a folder #}
 {% else %}
   {% if entity.readme %}

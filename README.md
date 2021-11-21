@@ -24,6 +24,8 @@ yarn exe --help
 * [x] RAW page
 * [ ] Revisions page
 * [ ] Compare page
+* [ ] Plain text in search
+* [ ] Excerpt
 * [x] Search Page
 * [ ] "This_is_a_Test!/Antoher/Damani&#39s_List_of_Jazz_101_Albums" <- quotes!
 
@@ -45,7 +47,18 @@ Exceptions
 
 ---
 
-### Scratchpad
+## Scratchpad
+
+### Building
+
+Doing this on a CircleCI/Ubuntu 20.04 image `cimg/node:14.15.2`:
+
+```bash
+npm i -g nexe
+yarn
+yarn clean
+yarn build
+```
 
 ```bash
 find . -type f -exec gzip -9 '{}' \; -exec mv '{}.gz' '{}' \;

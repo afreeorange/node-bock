@@ -2,6 +2,8 @@ import { existsSync, readFileSync, unlinkSync } from "fs";
 
 import sqlite3 from "sqlite3";
 
+import { Bock } from "./types";
+
 export const createDatabase = async (bock: Bock) => {
   const databasePath = `${bock.outputFolder}/entities.db`;
 

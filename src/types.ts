@@ -1,6 +1,6 @@
-type EntityType = "article" | "folder";
+export type EntityType = "article" | "folder";
 
-type EntityHierarchy = {
+export type EntityHierarchy = {
   name: string;
   type: EntityType;
 
@@ -8,7 +8,7 @@ type EntityHierarchy = {
   uri: string;
 };
 
-type Entity = {
+export type Entity = {
   created: Date;
   modified: Date;
   hierarchy: EntityHierarchy[];
@@ -21,12 +21,12 @@ type Entity = {
   uri: string;
 };
 
-type Folder = Entity & {
+export type Folder = Entity & {
   children: any[];
   readme: null | string;
 };
 
-type Article = Entity & {
+export type Article = Entity & {
   source: string;
   wordCount: number;
   excerpt: string;
@@ -35,7 +35,7 @@ type Article = Entity & {
   revisions: string[];
 };
 
-type Bock = {
+export type Bock = {
   articleRoot: string;
   entities: Record<string, Entity>;
   outputFolder: string;
@@ -48,7 +48,7 @@ type Bock = {
  * Specify a few things that are supplied to all templates from the content
  * writers.
  */
-type TemplateVariables = {
+export type TemplateVariables = {
   name: string;
   type:
     | "article"
@@ -65,3 +65,5 @@ type TemplateVariables = {
     version: string;
   };
 } & Record<string, any>;
+
+export type Statistics = {};

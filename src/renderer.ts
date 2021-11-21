@@ -4,6 +4,7 @@ import formatDate from "date-fns/format";
 import beautify from "js-beautify";
 
 import { BEAUTIFY_OPTIONS } from "./constants";
+import { TemplateVariables } from "./types";
 import packageInfo from "../package.json";
 
 const renderer = nunjucks.configure({});

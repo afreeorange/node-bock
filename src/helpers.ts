@@ -5,6 +5,7 @@ import { mkdir } from "fs/promises";
 import { v5 as uuidv5 } from "uuid";
 
 import { ROOT_NODE_NAME, UUID_NAMESPACE } from "./constants";
+import { EntityHierarchy } from "./types";
 
 export const generateIdFrom = (articleRoot: string, articlePath: string) =>
   uuidv5(`${articleRoot}/${articlePath}`, UUID_NAMESPACE);
@@ -64,3 +65,6 @@ export const generateHierarchyFrom = (
 
   return finalList;
 };
+
+export const stripHTML = (html = "") =>
+  html.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>?/gi, "");

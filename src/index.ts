@@ -3,6 +3,7 @@
 import { writeFile } from "fs/promises";
 
 import chokidar from "chokidar";
+import { sort } from "fast-sort";
 
 import CLI from "./cli";
 import {
@@ -16,6 +17,7 @@ import {
 } from "./writers";
 import { createDatabase } from "./database";
 import { getEntities } from "./readers";
+import { Bock } from "./types";
 
 (async () => {
   CLI.parse(process.argv);
@@ -25,7 +27,7 @@ import { getEntities } from "./readers";
     articleRoot,
     outputFolder,
     entities,
-    listOfEntities: Object.values(entities),
+    listOfEntities: sort(Object.values(entities)).desc((e) => e.modified),
     listOfPaths: Object.keys(entities),
     prettify,
   };

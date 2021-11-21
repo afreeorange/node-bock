@@ -10,6 +10,7 @@ import {
   removeExtension,
 } from "./helpers";
 import parser from "./parser";
+import { Bock, Entity } from "./types";
 
 export const getReadme = async ({ articleRoot }: Bock, entity: Entity) => {
   let ret: {
