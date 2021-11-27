@@ -53,11 +53,19 @@ Exceptions
 
 Doing this on a CircleCI/Ubuntu 20.04 image `cimg/node:14.15.2`:
 
+#### Build the Executable
+
 ```bash
-npm i -g nexe
-yarn
-yarn clean
-yarn build
+# Docker
+docker run -v ~/Downloads/out:/out -ti cimg/node:14.15.2 /bin/bash
+
+# Inside Container
+git clone https://github.com/afreeorange/node-bock.git /home/circleci/project
+yarn && yarn build
+tar -czvf /out/bock-linux.tgz .
+
+# Outside Container
+aws s3 sync ~/Downloads/out/ s3://public.nikhil.io/
 ```
 
 ```bash
