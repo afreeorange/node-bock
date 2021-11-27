@@ -1,6 +1,6 @@
-import { writeFile, readFile, stat, readdir } from "fs/promises";
+import { writeFile, readFile, stat } from "fs/promises";
 
-import { copy, ensureDir } from "fs-extra";
+import { copy } from "fs-extra";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
 import highlight from "highlight.js";
