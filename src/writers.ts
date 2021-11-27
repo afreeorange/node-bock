@@ -418,7 +418,7 @@ export const copyAssets = async ({ articleRoot, outputFolder }: Bock) => {
       `${outputFolder}/${ASSETS_FOLDER}`,
     );
 
-    await copy(`./dist/src/templates`, `${outputFolder}`, {
+    await copy(`dist/src/templates`, `${outputFolder}`, {
       filter: (src) => !src.endsWith("html"),
     });
   } catch (error) {
