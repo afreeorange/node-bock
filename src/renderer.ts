@@ -8,6 +8,10 @@ import { BEAUTIFY_OPTIONS } from "./constants";
 import { TemplateVariables } from "./types";
 import packageInfo from "../package.json";
 
+/**
+ * FUCKING NUNJUCKS
+ * https://stackoverflow.com/questions/39050788/nunjucks-template-not-found
+ */
 const renderer = nunjucks.configure(`${__dirname}/templates`, {});
 renderer.addFilter("numeral", (number: string, format: string) => {
   const n = numeral(number);
@@ -27,13 +31,10 @@ export const render = ({
   variables: TemplateVariables;
   prettify: boolean;
 }) => {
-  /**
-   * FUCKING NUNJUCKS
-   * https://stackoverflow.com/questions/39050788/nunjucks-template-not-found
-   */
-  const rendered = renderer.render(path.resolve(`${__dirname}/${template}`), {
+  const rendered = renderer.render(template, {
     ...variables,
     packageInfo,
   });
+
   return prettify ? beautify.html(rendered, BEAUTIFY_OPTIONS) : rendered;
 };

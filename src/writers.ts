@@ -25,7 +25,7 @@ export const createSearch = async (bock: Bock) => {
   await writeFile(
     `${outputFolder}/search/index.html`,
     render({
-      template: `templates/search.html`,
+      template: `search.html`,
       variables: {
         type: "search",
         name: "Search Articles",
@@ -92,7 +92,7 @@ export const createHome = async (bock: Bock) => {
   await writeFile(
     `${outputFolder}/Home/index.html`,
     render({
-      template: `templates/entity.html`,
+      template: `entity.html`,
       variables: {
         type: "home",
         name: entity.name,
@@ -146,7 +146,7 @@ export const createEntity = async (bock: Bock, entity: Entity) => {
   await writeFile(
     `${outputFolder}/${entity.uri}/index.html`,
     render({
-      template: `templates/entity.html`,
+      template: `entity.html`,
       variables: {
         type: entity.type,
         name: entity.name,
@@ -205,7 +205,7 @@ export const createRoot = async (bock: Bock) => {
   await writeFile(
     `${outputFolder}/ROOT/index.html`,
     render({
-      template: `templates/entity.html`,
+      template: `entity.html`,
       variables: {
         type: "folder",
         name: entity.name,
@@ -234,7 +234,7 @@ export const createRandom = async ({
     `${outputFolder}/random/index.html`,
 
     render({
-      template: `templates/random.html`,
+      template: `random.html`,
       variables: {
         type: "random",
         name: "Random Article",
@@ -255,7 +255,7 @@ export const createRawArticle = async (bock: Bock, article: Article) => {
   await writeFile(
     `${outputFolder}/${article.uri}/raw/index.html`,
     render({
-      template: `templates/raw.html`,
+      template: `raw.html`,
       variables: {
         type: "raw",
         name: article.name,
@@ -282,7 +282,7 @@ export const createRevision = async (
   await writeFile(
     `${outputFolder}/${article.uri}/revisions/index.html`,
     render({
-      template: `templates/revision.html`,
+      template: `revision.html`,
       variables: {
         type: "revision",
         name: article.name,
