@@ -6,7 +6,7 @@ const md = new MarkdownIt({
   linkify: true,
   typographer: true,
 })
-  .use(require("markdown-it-prism"))
+  // .use(require("markdown-it-prism"))
   .use(require("markdown-it-attrs"))
   .use(require("markdown-it-attribution"), {
     classNameContainer: null,

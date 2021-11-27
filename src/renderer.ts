@@ -1,3 +1,4 @@
+import path from "path";
 import nunjucks from "nunjucks";
 import numeral from "numeral";
 import formatDate from "date-fns/format";
@@ -7,7 +8,7 @@ import { BEAUTIFY_OPTIONS } from "./constants";
 import { TemplateVariables } from "./types";
 import packageInfo from "../package.json";
 
-const renderer = nunjucks.configure({});
+const renderer = nunjucks.configure(`${__dirname}/templates`, {});
 renderer.addFilter("numeral", (number: string, format: string) => {
   const n = numeral(number);
   return format === "value" ? n.value() : n.format(format);
@@ -26,6 +27,13 @@ export const render = ({
   variables: TemplateVariables;
   prettify: boolean;
 }) => {
-  const rendered = renderer.render(template, { ...variables, packageInfo });
+  /**
+   * FUCKING NUNJUCKS
+   * https://stackoverflow.com/questions/39050788/nunjucks-template-not-found
+   */
+  const rendered = renderer.render(path.resolve(`${__dirname}/${template}`), {
+    ...variables,
+    packageInfo,
+  });
   return prettify ? beautify.html(rendered, BEAUTIFY_OPTIONS) : rendered;
 };

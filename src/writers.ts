@@ -1,4 +1,5 @@
-import { writeFile, readFile, stat } from "fs/promises";
+import path from "path";
+import { writeFile, readFile, stat, readdir } from "fs/promises";
 
 import { copy } from "fs-extra";
 import { v5 as uuidv5 } from "uuid";
@@ -25,7 +26,7 @@ export const createSearch = async (bock: Bock) => {
   await writeFile(
     `${outputFolder}/search/index.html`,
     render({
-      template: `${__dirname}/templates/search.html`,
+      template: `templates/search.html`,
       variables: {
         type: "search",
         name: "Search Articles",
@@ -92,7 +93,7 @@ export const createHome = async (bock: Bock) => {
   await writeFile(
     `${outputFolder}/Home/index.html`,
     render({
-      template: `${__dirname}/templates/entity.html`,
+      template: `templates/entity.html`,
       variables: {
         type: "home",
         name: entity.name,
@@ -143,10 +144,22 @@ export const createHome = async (bock: Bock) => {
 export const createEntity = async (bock: Bock, entity: Entity) => {
   const { outputFolder, prettify } = bock;
 
+  const source = (
+    await readFile(`${__dirname}/templates/entity.html`)
+  ).toString();
+
+  console.log("-----------");
+  console.log("SOURCE", source);
+  console.log("__dirname :>> ", __dirname);
+  console.log("-----------");
+  const foo = await readdir(__dirname + "/templates");
+  foo.forEach((f) => console.log("f :>> ", f));
+  console.log("-----------");
+
   await writeFile(
     `${outputFolder}/${entity.uri}/index.html`,
     render({
-      template: `${__dirname}/templates/entity.html`,
+      template: `templates/entity.html`,
       variables: {
         type: entity.type,
         name: entity.name,
@@ -205,7 +218,7 @@ export const createRoot = async (bock: Bock) => {
   await writeFile(
     `${outputFolder}/ROOT/index.html`,
     render({
-      template: `${__dirname}/templates/entity.html`,
+      template: `templates/entity.html`,
       variables: {
         type: "folder",
         name: entity.name,
@@ -234,7 +247,7 @@ export const createRandom = async ({
     `${outputFolder}/random/index.html`,
 
     render({
-      template: `${__dirname}/templates/random.html`,
+      template: `templates/random.html`,
       variables: {
         type: "random",
         name: "Random Article",
@@ -255,7 +268,7 @@ export const createRawArticle = async (bock: Bock, article: Article) => {
   await writeFile(
     `${outputFolder}/${article.uri}/raw/index.html`,
     render({
-      template: `${__dirname}/templates/raw.html`,
+      template: `templates/raw.html`,
       variables: {
         type: "raw",
         name: article.name,
@@ -282,7 +295,7 @@ export const createRevision = async (
   await writeFile(
     `${outputFolder}/${article.uri}/revisions/index.html`,
     render({
-      template: `${__dirname}/templates/revision.html`,
+      template: `templates/revision.html`,
       variables: {
         type: "revision",
         name: article.name,
@@ -418,7 +431,7 @@ export const copyAssets = async ({ articleRoot, outputFolder }: Bock) => {
       `${outputFolder}/${ASSETS_FOLDER}`,
     );
 
-    await copy(`${__dirname}/templates`, `${outputFolder}`, {
+    await copy(path.resolve(`${__dirname}/templates`), `${outputFolder}`, {
       filter: (src) => !src.endsWith("html"),
     });
   } catch (error) {

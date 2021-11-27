@@ -11,8 +11,19 @@
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "tsc -p . && mkdir dist/src/templates && cp -rv src/templates/* dist/src/templates/",
     "clean": "rm -rf dist",
-    "create-single-executable": "nexe --output bock --build dist/src/index.js",
+    "all": "yarn clean && yarn build",
     "exe": "npx ts-node -T src/index.ts"
+  },
+  "pkg": {
+    "scripts": "dist/src/index.js",
+    "assets": [
+      "package.json",
+      "dist/src/templates/**/*"
+    ],
+    "targets": [
+      "node16-macos-x64"
+    ],
+    "outputPath": "dist"
   },
   "dependencies": {
     "chalk": "^4.1.2",
@@ -25,7 +36,6 @@
     "fast-glob": "^3.2.7",
     "fast-sort": "^3.1.1",
     "fs-extra": "^10.0.0",
-    "globby": "^12.0.2",
     "highlight.js": "^11.3.1",
     "isomorphic-git": "^1.10.0",
     "js-beautify": "^1.14.0",
@@ -33,7 +43,6 @@
     "markdown-it-attribution": "^0.1.4",
     "markdown-it-attrs": "^4.1.0",
     "markdown-it-prism": "^2.2.1",
-    "nodegit": "^0.27.0",
     "numeral": "^2.0.6",
     "nunjucks": "^3.2.3",
     "simple-git": "^2.45.1",

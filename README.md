@@ -55,14 +55,25 @@ Doing this on a CircleCI/Ubuntu 20.04 image `cimg/node:14.15.2`:
 
 #### Build the Executable
 
+This was copypastaed a lot
+
+```bash
+yarn all && pkg . && rm -rf ~/Downloads/haha/* && ./dist/bock -a ~/Downloads/wiki.nikhil.io.articles -o ~/Downloads/haha/
+```
+
 ```bash
 # Docker
-docker run -v ~/Downloads/out:/out -ti cimg/node:14.15.2 /bin/bash
+docker run -v ~/Downloads/out:/out -ti cimg/node:16.13 /bin/bash
 
 # Inside Container
-git clone https://github.com/afreeorange/node-bock.git /home/circleci/project
+sudo apt-get update
+sudo apt-get install python libkrb5-dev libssl-dev -y
+sudo npm i -g pkg
+git clone https://github.com/afreeorange/node-bock.git ~/project
+cd ~/project
 yarn && yarn build
-tar -czvf /out/bock-linux.tgz .
+pkg -t node16-linux-x64 dist/src/index.js
+# tar -czvf /out/bock-linux.tgz .
 
 # Outside Container
 aws s3 sync ~/Downloads/out/ s3://public.nikhil.io/
