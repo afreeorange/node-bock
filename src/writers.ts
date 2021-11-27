@@ -1,5 +1,6 @@
 import { writeFile, readFile, stat } from "fs/promises";
 
+import { ncp } from "ncp";
 import { copy } from "fs-extra";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
@@ -411,16 +412,22 @@ export const createEntities = async (bock: Bock): Promise<void> => {
   bar.stop();
 };
 
-export const copyAssets = async ({ articleRoot, outputFolder }: Bock) => {
+export const copyAssets = ({ articleRoot, outputFolder }: Bock) => {
   try {
-    await copy(
+    ncp(
       `${articleRoot}/${ASSETS_FOLDER}`,
       `${outputFolder}/${ASSETS_FOLDER}`,
+      (e) => console.log("e :>> ", e),
     );
 
-    await copy(`dist/src/templates`, `${outputFolder}`, {
-      filter: (src) => !src.endsWith("html"),
-    });
+    ncp(
+      `${__dirname}/templates`,
+      `${outputFolder}`,
+      {
+        filter: (src) => !src.endsWith("html"),
+      },
+      (e) => console.log("e :>> ", e),
+    );
   } catch (error) {
     console.log(`Could not copy assets: ${error}`);
   }

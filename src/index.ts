@@ -43,7 +43,7 @@ import { Bock } from "./types";
   await createEntities(bock);
   console.log(`Finished writing ${bock.listOfEntities.length} entities`);
 
-  await copyAssets(bock);
+  copyAssets(bock);
   console.log(`Copied static assets`);
 
   createDatabase(bock);
