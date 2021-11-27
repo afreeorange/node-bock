@@ -1,7 +1,6 @@
-import path from "path";
 import { writeFile, readFile, stat, readdir } from "fs/promises";
 
-import { copy } from "fs-extra";
+import { copy, ensureDir } from "fs-extra";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
 import highlight from "highlight.js";
@@ -143,18 +142,6 @@ export const createHome = async (bock: Bock) => {
 
 export const createEntity = async (bock: Bock, entity: Entity) => {
   const { outputFolder, prettify } = bock;
-
-  const source = (
-    await readFile(`${__dirname}/templates/entity.html`)
-  ).toString();
-
-  console.log("-----------");
-  console.log("SOURCE", source);
-  console.log("__dirname :>> ", __dirname);
-  console.log("-----------");
-  const foo = await readdir(__dirname + "/templates");
-  foo.forEach((f) => console.log("f :>> ", f));
-  console.log("-----------");
 
   await writeFile(
     `${outputFolder}/${entity.uri}/index.html`,
@@ -431,7 +418,7 @@ export const copyAssets = async ({ articleRoot, outputFolder }: Bock) => {
       `${outputFolder}/${ASSETS_FOLDER}`,
     );
 
-    await copy(path.resolve(`${__dirname}/templates`), `${outputFolder}`, {
+    await copy(`./dist/src/templates`, `${outputFolder}`, {
       filter: (src) => !src.endsWith("html"),
     });
   } catch (error) {

@@ -28,6 +28,8 @@ yarn exe --help
 * [ ] Excerpt
 * [x] Search Page
 * [ ] "This_is_a_Test!/Antoher/Damani&#39s_List_of_Jazz_101_Albums" <- quotes!
+* [ ] `markdown-it-prism` when making executable...
+* [ ] `nodegit` _can_ be a piece of shit...
 
 ## Design Notes
 
@@ -58,7 +60,9 @@ Doing this on a CircleCI/Ubuntu 20.04 image `cimg/node:14.15.2`:
 This was copypastaed a lot
 
 ```bash
-yarn all && pkg . && rm -rf ~/Downloads/haha/* && ./dist/bock -a ~/Downloads/wiki.nikhil.io.articles -o ~/Downloads/haha/
+yarn all && \
+rm -rf ~/Downloads/haha/* && \
+./dist/bock -a ~/Downloads/wiki.nikhil.io.articles -o ~/Downloads/haha/
 ```
 
 ```bash
