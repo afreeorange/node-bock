@@ -1,7 +1,6 @@
 import { writeFile, readFile, stat } from "fs/promises";
 
 import { ncp } from "ncp";
-import { copy } from "fs-extra";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
 import highlight from "highlight.js";
@@ -412,23 +411,23 @@ export const createEntities = async (bock: Bock): Promise<void> => {
   bar.stop();
 };
 
+/**
+ * Note: `fs-extra` did not work with `pkg` and the compiled executable so I
+ * had to resort to this ancient-ass (but simple) package instead.
+ */
 export const copyAssets = ({ articleRoot, outputFolder }: Bock) => {
-  try {
-    ncp(
-      `${articleRoot}/${ASSETS_FOLDER}`,
-      `${outputFolder}/${ASSETS_FOLDER}`,
-      (e) => console.log("e :>> ", e),
-    );
+  ncp(
+    `${articleRoot}/${ASSETS_FOLDER}`,
+    `${outputFolder}/${ASSETS_FOLDER}`,
+    (e) => (e ? console.log(`Could not copy assets: ${e}`) : true),
+  );
 
-    ncp(
-      `${__dirname}/templates`,
-      `${outputFolder}`,
-      {
-        filter: (src) => !src.endsWith("html"),
-      },
-      (e) => console.log("e :>> ", e),
-    );
-  } catch (error) {
-    console.log(`Could not copy assets: ${error}`);
-  }
+  ncp(
+    `${__dirname}/templates`,
+    `${outputFolder}`,
+    {
+      filter: (src) => !src.endsWith("html"),
+    },
+    (e) => (e ? console.log(`Could not copy assets: ${e}`) : true),
+  );
 };

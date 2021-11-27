@@ -43,12 +43,6 @@ import { Bock } from "./types";
   await createEntities(bock);
   console.log(`Finished writing ${bock.listOfEntities.length} entities`);
 
-  copyAssets(bock);
-  console.log(`Copied static assets`);
-
-  createDatabase(bock);
-  console.log(`Generated SQLite Database`);
-
   await createHome(bock);
   console.log(`Rendered Homepage`);
 
@@ -60,6 +54,12 @@ import { Bock } from "./types";
 
   await createRandom(bock);
   console.log(`Rendered Random`);
+
+  copyAssets(bock);
+  console.log(`Copied static assets`);
+
+  createDatabase(bock);
+  console.log(`Generated SQLite Database`);
 
   if (watch) {
     console.log(`Watching ${articleRoot} for changes`);
