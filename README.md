@@ -21,14 +21,15 @@ yarn exe --help
 * [ ] Server
 * [ ] Latest entries
 * [ ] List of articles
+* [ ] Dark Mode
 * [x] RAW page
 * [ ] Revisions page
 * [ ] Compare page
-* [ ] Plain text in search
+* [x] Plain text in search
 * [ ] Excerpt
 * [x] Search Page
 * [ ] "This_is_a_Test!/Antoher/Damani&#39s_List_of_Jazz_101_Albums" <- quotes!
-* [ ] `markdown-it-prism` when making executable...
+* [x] `markdown-it-prism` when making executable...
 * [ ] `nodegit` _can_ be a piece of shit...
 
 ## Design Notes
@@ -76,11 +77,11 @@ sudo npm i -g pkg
 git clone https://github.com/afreeorange/node-bock.git ~/project
 cd ~/project
 yarn && yarn build
-pkg -t node16-linux-x64 dist/src/index.js
-# tar -czvf /out/bock-linux.tgz .
+# pkg -t node16-linux-x64 dist/src/index.js
+tar -czvf /out/bock-linux.tgz .
 
 # Outside Container
-aws s3 sync ~/Downloads/out/ s3://public.nikhil.io/
+aws s3 sync ~/Downloads/out/ s3://public.nikhil.io/ 
 ```
 
 ```bash

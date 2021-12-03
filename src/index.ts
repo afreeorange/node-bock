@@ -22,6 +22,7 @@ import { Bock } from "./types";
 (async () => {
   CLI.parse(process.argv);
   const { articleRoot, outputFolder, watch, prettify } = CLI.opts();
+
   const entities = await getEntities(articleRoot);
   const bock: Bock = {
     articleRoot,
