@@ -9,7 +9,8 @@
   --font-size-small: small;
 
   /* Colors */
-  --color-black: #101010;
+  --color-background: #fff;
+  --color-foreground: #101010;
   --color-grey-dark: #666;
   --color-grey-light: #ccc;
   --color-grey-superlight: #eee;
@@ -23,7 +24,8 @@
 
 html,
 body {
-  color: var(--color-black);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
   font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
     helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
   line-height: var(--line-height);
@@ -40,7 +42,7 @@ code {
 
 a {
   color: var(--color-highlight);
-  text-underline-offset: 2px;
+  text-underline-offset: 1px;
 }
 a:hover {
   color: var(--color-highlight-light);
@@ -229,7 +231,7 @@ h2 > span {
   text-decoration: none;
 }
 .container.raw main h1 span:nth-of-type(2) {
-  background-color: var(--color-black);
+  background-color: var(--color-foreground);
 }
 .container.raw main h1 span:nth-of-type(2):hover {
   background-color: var(--color-highlight-light);
@@ -258,17 +260,13 @@ main pre {
   white-space: pre-wrap;
 }
 
-div[data-content="results"] {
-  overflow-x: hidden;
-}
-
 .container.search main ul {
   margin: var(--root-spacing) 0;
   padding: 0;
 }
 
 .container.search main ul a {
-  color: var(--color-black);
+  color: var(--color-foreground);
   text-decoration: none;
 }
 
@@ -309,7 +307,7 @@ main table {
 main table thead tr th {
   padding: calc(var(--root-spacing) / 2);
   text-align: left;
-  border-bottom: 2px solid var(--color-black);
+  border-bottom: 2px solid var(--color-foreground);
 }
 
 main table tbody tr td {
@@ -325,7 +323,7 @@ main table tbody tr:not(:last-child) td {
 footer {
   color: var(--color-grey);
   font-size: small;
-  margin: 4em 0;
+  margin: 2em 0;
 }
 footer ul {
   list-style-type: none;
@@ -380,7 +378,7 @@ footer li a::before {
  *
  * A simple stylesheet for rendering beautiful keyboard-style elements.
  *
- * Author:  Michael Hüneburg
+ * Author:  Michael HÃ¼neburg
  * Website: http://michaelhue.com/keyscss
  * License: MIT License (see LICENSE.txt)
  */
@@ -419,7 +417,7 @@ kbd {
     from(rgb(210, 210, 210)),
     to(rgb(255, 255, 255))
   );
-  color: var(--color-black);
+  color: var(--color-foreground);
   text-shadow: 0 0 2px rgb(255, 255, 255);
   -moz-box-shadow: inset 0 0 1px rgb(255, 255, 255),
     inset 0 0 0.4em rgb(200, 200, 200), 0 0.1em 0 rgb(130, 130, 130),

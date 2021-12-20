@@ -3,3 +3,4 @@ dist
 index-*
 node_modules
 node-bock
+*.tgz

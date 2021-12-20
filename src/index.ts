@@ -28,7 +28,7 @@ import { Bock } from "./types";
     articleRoot,
     outputFolder,
     entities,
-    listOfEntities: sort(Object.values(entities)).desc((e) => e.modified),
+    listOfEntities: sort(Object.values(entities)).asc((e) => e.name),
     listOfPaths: Object.keys(entities),
     prettify,
   };

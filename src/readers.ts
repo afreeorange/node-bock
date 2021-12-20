@@ -1,6 +1,7 @@
 import { readFile } from "fs/promises";
 
 import fg from "fast-glob";
+import fg from "fast-sort";
 
 import { ASSETS_FOLDER, ENTITIES_TO_IGNORE, MAX_DEPTH } from "./constants";
 import {

@@ -1,6 +1,6 @@
 # Bock
 
-A static wiki generator. WIP. [See it in action here](https://wiki.nikhil.io/Home/). 
+A static wiki generator. WIP. [See it in action here](https://wiki.nikhil.io). 
 
 ```bash
 yarn exe --help
@@ -56,6 +56,12 @@ Exceptions
 
 Doing this on a CircleCI/Ubuntu 20.04 image `cimg/node:14.15.2`:
 
+### Manual Sync
+
+```bash
+
+```
+
 #### Build the Executable
 
 This was copypastaed a lot
@@ -78,7 +84,7 @@ git clone https://github.com/afreeorange/node-bock.git ~/project
 cd ~/project
 yarn && yarn build
 # pkg -t node16-linux-x64 dist/src/index.js
-tar -czvf /out/bock-linux.tgz .
+tar --exclude='./.git' -czvf /out/bock-linux.tgz .
 
 # Outside Container
 aws s3 sync ~/Downloads/out/ s3://public.nikhil.io/ 
@@ -376,3 +382,9 @@ aws s3 sync . s3://wiki.nikhil.io/ --content-encoding gzip --delete --profile ni
   deleted, staged
  */
 ```
+
+```
+"make-executable": "pkg --public-packages \"*\" --public .",
+```
+
+directory-tree

@@ -1,7 +1,7 @@
 import MarkdownIt from "markdown-it";
 
 const md = new MarkdownIt({
-  breaks: true,
+  breaks: false,
   html: true,
   linkify: true,
   typographer: true,

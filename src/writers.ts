@@ -99,7 +99,6 @@ export const createHome = async (bock: Bock) => {
         uri: "/",
 
         entity,
-        recent: listOfEntities.slice(0, 10),
       },
       prettify,
     }),
