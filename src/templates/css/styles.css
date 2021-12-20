@@ -104,7 +104,7 @@ header nav ul li a[href="/search"] {
   -webkit-mask-image: url(/img/search.svg);
   mask-image: url(/img/search.svg);
 }
-header nav ul li a[href="/Home"] {
+header nav ul li a[href="/"] {
   -webkit-mask-image: url(/img/home.svg);
   mask-image: url(/img/home.svg);
 }

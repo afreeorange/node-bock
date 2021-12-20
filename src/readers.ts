@@ -44,7 +44,7 @@ export const getEntities = async (
   let ret: Record<string, Entity> = {};
 
   (
-    await fg(`${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`, {
+    await fg(`${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**/*.md`, {
       deep: maxDepth,
       followSymbolicLinks: false,
       ignore: ENTITIES_TO_IGNORE,

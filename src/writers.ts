@@ -90,53 +90,19 @@ export const createHome = async (bock: Bock) => {
   };
 
   await writeFile(
-    `${outputFolder}/Home/index.html`,
+    `${outputFolder}/index.html`,
     render({
       template: `entity.html`,
       variables: {
         type: "home",
         name: entity.name,
-        uri: "/Home",
+        uri: "/",
 
         entity,
         recent: listOfEntities.slice(0, 10),
       },
       prettify,
     }),
-  );
-
-  await writeFile(
-    `${outputFolder}/index.html`,
-    `
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0;url=/Home" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <link rel="icon" href="/img/favicon.png" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="stylesheet" href="/css/styles.css" />
-
-    <title>Redirecting...</title>
-
-    <style type="text/css">
-      body {
-        align-items: center;
-        display: flex;
-        font-size: larger;
-        justify-content: center;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <div><a href="/Home">Click here</a> if you are not redirected&hellip;</div>
-  </body>
-</html>  
-  `,
   );
 };
 
