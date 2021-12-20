@@ -5,7 +5,6 @@ import { writeFile } from "fs/promises";
 import chokidar from "chokidar";
 import { sort } from "fast-sort";
 
-import CLI from "./cli";
 import {
   createEntities,
   createSingleEntity,
@@ -18,10 +17,10 @@ import {
 import { createDatabase } from "./database";
 import { getEntities } from "./readers";
 import { Bock } from "./types";
+import { getArguments } from "./cli";
 
 (async () => {
-  CLI.parse(process.argv);
-  const { articleRoot, outputFolder, watch, prettify } = CLI.opts();
+  const { articleRoot, outputFolder, watch, prettify } = getArguments();
 
   const entities = await getEntities(articleRoot);
   const bock: Bock = {

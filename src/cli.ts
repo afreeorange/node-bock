@@ -2,10 +2,9 @@ import { Command } from "commander";
 
 import packageJson from "../package.json";
 
-const bockCLI = new Command();
+const CLI = new Command();
 
-bockCLI
-  .version(packageJson.version)
+CLI.version(packageJson.version)
   .requiredOption(
     "-a, --article-root <articleRoot>",
     "Git repo containing your articles",
@@ -21,4 +20,14 @@ bockCLI
   .option("-c, --clean", "Clear output folder before writing", false)
   .option("-p, --prettify", "Prettify output HTML (slow)", false);
 
-export default bockCLI;
+export const getArguments = () => {
+  CLI.parse(process.argv);
+  const { articleRoot, outputFolder, watch, prettify } = CLI.opts();
+
+  return {
+    articleRoot,
+    outputFolder,
+    watch,
+    prettify,
+  };
+};
