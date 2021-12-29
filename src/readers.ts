@@ -1,7 +1,6 @@
 import { readFile } from "fs/promises";
 
 import fg from "fast-glob";
-import fg from "fast-sort";
 
 import { ASSETS_FOLDER, ENTITIES_TO_IGNORE, MAX_DEPTH } from "./constants";
 import {
@@ -12,6 +11,7 @@ import {
 } from "./helpers";
 import parser from "./parser";
 import { Bock, Entity } from "./types";
+import { getCreationDate, getDates, getModifiationDate } from "./repository";
 
 export const getReadme = async ({ articleRoot }: Bock, entity: Entity) => {
   let ret: {
@@ -44,8 +44,8 @@ export const getEntities = async (
 ): Promise<Record<string, Entity>> => {
   let ret: Record<string, Entity> = {};
 
-  (
-    await fg(`${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**/*.md`, {
+  const filteredList = (
+    await fg(`${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`, {
       deep: maxDepth,
       followSymbolicLinks: false,
       ignore: ENTITIES_TO_IGNORE,
@@ -53,20 +53,22 @@ export const getEntities = async (
       onlyFiles: false,
       stats: true,
     })
-  )
-    .filter(
-      (e) =>
-        (e.dirent.isFile() || e.dirent.isDirectory()) &&
-        !e.path.includes(ASSETS_FOLDER),
-    )
-    .map((e) => {
+  ).filter(
+    (e) =>
+      (e.dirent.isFile() || e.dirent.isDirectory()) &&
+      !e.path.includes(ASSETS_FOLDER),
+  );
+
+  await Promise.all(
+    filteredList.map(async (e) => {
       let path = e.path.replace(`${articleRoot}/`, "");
+      let { created, modified } = await getDates(articleRoot, e.path);
 
       ret[path] = {
         id: generateIdFrom(articleRoot, e.path),
-        created: e.stats!.ctime,
+        created,
         hierarchy: generateHierarchyFrom(articleRoot, e.path),
-        modified: e.stats!.mtime,
+        modified,
         type: e.dirent.isFile() ? "article" : "folder",
         sizeInBytes: e.stats!.size,
         name: removeExtension(e.name),
@@ -75,7 +77,8 @@ export const getEntities = async (
         ),
         path: e.path.replace(`${articleRoot}/`, ""),
       };
-    });
+    }),
+  );
 
   return ret;
 };

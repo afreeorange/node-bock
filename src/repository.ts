@@ -1,62 +1,109 @@
-// // import Git, { Repository } from "nodegit";
-// // import { GitError } from "simple-git";
+import util from "util";
+import { stat } from "fs/promises";
+import { stdout } from "process";
+import { Revision, RevisionList } from "./types";
+import parser from "./parser";
+const exec = util.promisify(require("child_process").exec);
 
-// // const REPOSITORY = "/Users/nikhilanand/Downloads/wiki.nikhil.io.articles";
+export const getDates = async (
+  articleRoot: string,
+  articlePath: string,
+): Promise<{
+  created: Date;
+  modified: Date;
+}> => {
+  const path = articlePath.replace(`${articleRoot}/`, "");
+  let { ctime, mtime } = await stat(articlePath);
+  let ret = {
+    created: ctime,
+    modified: mtime,
+  };
 
-// (async () => {
-//   let repo: Repository;
+  try {
+    const { stdout, stderr } = await exec(
+      `git -C ${articleRoot} log --diff-filter=AM --follow --format=%aD --reverse -- "${path}"`,
+    );
 
-//   try {
-//     repo = await Git.Repository.open(REPOSITORY);
-//   } catch (error) {
-//     console.error(
-//       "Could not open repository. Either the path is messed up or it's not a Git repository",
-//     );
-//   }
+    // Case I
+    if (stderr || !stdout) {
+      return ret;
+    }
 
-//   // // Open the repository directory.
-//   // Git.Repository.open(REPOSITORY)
-//   //   // Open the master branch.
-//   //   .then(function (repo) {
-//   //     return repo.getMasterCommit();
-//   //   })
-//   //   // Display information about commits on master.
-//   //   .then(function (firstCommitOnMaster) {
-//   //     // Create a new history event emitter.
-//   //     var history = firstCommitOnMaster.history();
+    // Case II
+    else {
+      const _ = stdout.split("\n");
 
-//   //     // Create a counter to only show up to 9 entries.
-//   //     var count = 0;
+      return {
+        created: new Date(_[0]),
+        modified: new Date(_[_.length - 2]),
+      };
+    }
+  } catch (error) {
+    console.error(`Dates error: ${articlePath}: ${error}`);
+    return ret;
+  }
+};
 
-//   //     // Listen for commit events from the history.
-//   //     history.on("commit", function (commit) {
-//   //       // Disregard commits past 9.
-//   //       if (++count >= 9) {
-//   //         return;
-//   //       }
+export const getRevisionList = async (
+  articleRoot: string,
+  articlePath: string,
+): Promise<RevisionList> => {
+  const path = articlePath.replace(`${articleRoot}/`, "");
+  let revisionList;
 
-//   //       // Show the commit sha.
-//   //       console.log("commit " + commit.sha());
+  try {
+    /**
+     * https://gist.github.com/varemenos/e95c2e098e657c7688fd
+     */
+    let { stdout, stderr } = await exec(
+      `git -C ${articleRoot} log --pretty=format:'{ "id": "%H", "shortId": "%h", "date": "%aD", "subject": "%f", "body": "%b", "author": { "name": "%aN", "email": "%aE"}}' "${path}"`,
+    );
 
-//   //       // Store the author object.
-//   //       var author = commit.author();
+    if (stderr || !stdout) {
+      return [];
+    }
 
-//   //       // Display author information.
-//   //       console.log("Author:\t" + author.name() + " <" + author.email() + ">");
+    /**
+     * Output does not have commas. Add them and make a list before parsing as
+     * JSON.
+     */
+    revisionList = `[${stdout.split("\n").join(",")}]`;
+    return JSON.parse(revisionList);
+  } catch (error) {
+    console.error(`Revision List error: ${articlePath}: ${error}`);
+    return [];
+  }
+};
 
-//   //       // Show the commit date.
-//   //       console.log("Date:\t" + commit.date());
+export const getRevision = async (
+  articleRoot: string,
+  articlePath: string,
+  id: string,
+): Promise<Revision> => {
+  const path = articlePath.replace(`${articleRoot}/`, "");
+  let ret: Revision = {
+    id,
+    shortId: id.slice(0, 7),
+    html: "",
+    source: "",
+  };
 
-//   //       // Give some space and show the message.
-//   //       console.log("\n    " + commit.message());
-//   //     });
+  try {
+    let { stdout, stderr } = await exec(
+      `git -C ${articleRoot} show "${id}:${path}"`,
+    );
 
-//   //     // Start emitting events.
-//   //     history.start();
-//   //   });
+    if (stderr || !stdout) {
+      return ret;
+    }
 
-//   // if (repo) {
-//   //   const foo = (await repo.getBranchCommit("master")).author();
-//   //   console.log("foo :>> ", foo);
-//   // }
-// })();
+    return {
+      ...ret,
+      source: stdout,
+      html: parser.render(stdout),
+    };
+  } catch (error) {
+    console.error(`Revision error: ${articlePath}: ${error}`);
+    return ret;
+  }
+};

@@ -13,9 +13,6 @@ export const generateIdFrom = (articleRoot: string, articlePath: string) =>
 export const generatePrettyPath = (entityPath: string) =>
   entityPath.replace(/\s+/g, "_");
 
-export const wordCount = (articleText: string): number =>
-  articleText.split(" ").length;
-
 export const removeExtension = (articlePath: string) =>
   articlePath.replace(extname(articlePath), "");
 
@@ -68,3 +65,8 @@ export const generateHierarchyFrom = (
 
 export const stripHTML = (html = "") =>
   html.replace(/<\/?([a-z][a-z0-9]*)\b[^>]*>?/gi, "");
+
+export const trim = (s: string) => s.replace(/^\s+|\s+$/g, "");
+
+export const removeTrailingSlashes = (s: string) =>
+  s.replace(/(.*)[\/].$/g, "$1");

@@ -4,18 +4,21 @@ import { ncp } from "ncp";
 import { v5 as uuidv5 } from "uuid";
 import cliProgress from "cli-progress";
 import highlight from "highlight.js";
+import { sort } from "fast-sort";
 
 import { render } from "./renderer";
 import {
   ASSETS_FOLDER,
   HOME_PAGE_DOCUMENT,
   JSON_PADDING,
+  MAX_RECENT_ARTICLES,
   UUID_NAMESPACE,
 } from "./constants";
 import parser from "./parser";
-import { mkdirp, wordCount } from "./helpers";
+import { mkdirp } from "./helpers";
 import { getEntities, getReadme } from "./readers";
 import { Article, Bock, Entity } from "./types";
+import { getDates, getRevisionList, getRevision } from "./repository";
 
 export const createSearch = async (bock: Bock) => {
   const { outputFolder, listOfEntities, prettify } = bock;
@@ -31,7 +34,7 @@ export const createSearch = async (bock: Bock) => {
         name: "Search Articles",
         uri: "/search",
 
-        articles: listOfEntities,
+        articles: sort(listOfEntities).asc((e) => e.path),
       },
       prettify,
     }),
@@ -60,8 +63,13 @@ export const createHome = async (bock: Bock) => {
 
   html = parser.render(source);
 
+  const { created, modified } = await getDates(
+    articleRoot,
+    `${articleRoot}/Home.md`,
+  );
+
   const entity = {
-    created: stats ? stats.ctime : null,
+    created,
     hierarchy: [
       {
         name: "ROOT",
@@ -75,14 +83,13 @@ export const createHome = async (bock: Bock) => {
       },
     ],
     id: uuidv5(`/${HOME_PAGE_DOCUMENT}`, UUID_NAMESPACE),
-    modified: stats ? stats.mtime : null,
+    modified,
     name: "Home",
     path: HOME_PAGE_DOCUMENT,
     sizeInBytes: 0,
     type: "home",
     uri: "Home",
     source,
-    wordCount: wordCount(source),
     excerpt: "",
     html,
     uncommitted: false,
@@ -99,6 +106,7 @@ export const createHome = async (bock: Bock) => {
         uri: "/",
 
         entity,
+        recent: listOfEntities.slice(0, MAX_RECENT_ARTICLES),
       },
       prettify,
     }),
@@ -236,7 +244,37 @@ export const createRawArticle = async (bock: Bock, article: Article) => {
   );
 };
 
-export const createRevision = async (
+export const createRevisionList = async (
+  bock: Bock,
+  article: Article,
+): Promise<void> => {
+  const { outputFolder, prettify } = bock;
+  const revisionListFolder = `${outputFolder}/${article.uri}/revisions`;
+
+  await mkdirp(revisionListFolder);
+
+  await writeFile(
+    `${revisionListFolder}/index.json`,
+    `{ "revisions": ${JSON.stringify(article.revisions, null, JSON_PADDING)}}`,
+  );
+
+  await writeFile(
+    `${revisionListFolder}/index.html`,
+    render({
+      template: `revision-list.html`,
+      variables: {
+        type: "revision-list",
+        name: article.name,
+        uri: article.uri,
+
+        entity: article,
+      },
+      prettify,
+    }),
+  );
+};
+
+export const createRevisions = async (
   bock: Bock,
   article: Article,
 ): Promise<void> => {
@@ -244,18 +282,37 @@ export const createRevision = async (
 
   await mkdirp(`${outputFolder}/${article.uri}/revisions`);
 
-  await writeFile(
-    `${outputFolder}/${article.uri}/revisions/index.html`,
-    render({
-      template: `revision.html`,
-      variables: {
-        type: "revision",
-        name: article.name,
-        uri: article.uri,
+  await Promise.all(
+    article.revisions.map(async (r) => {
+      let revisionPath = `${outputFolder}/${article.uri}/revisions/${r.shortId}`;
+      let revisionData = await getRevision(
+        bock.articleRoot,
+        article.path,
+        r.id,
+      );
 
-        entity: article,
-      },
-      prettify,
+      await mkdirp(`${revisionPath}`);
+
+      await writeFile(
+        `${revisionPath}/index.json`,
+        JSON.stringify(revisionData, null, JSON_PADDING),
+      );
+
+      await writeFile(
+        `${revisionPath}/index.html`,
+        render({
+          template: `revision.html`,
+          variables: {
+            type: "revision",
+            name: article.name,
+            uri: article.uri,
+
+            entity: article,
+            revisionData,
+          },
+          prettify,
+        }),
+      );
     }),
   );
 };
@@ -284,13 +341,14 @@ export const createSingleEntity = async (
 
   let data: any = {
     created,
-    modified,
     hierarchy,
     id,
+    modified,
     name,
+    path,
+    sizeInBytes,
     type,
     uri,
-    sizeInBytes,
   };
 
   if (type === "article") {
@@ -300,11 +358,10 @@ export const createSingleEntity = async (
     data = {
       ...data,
       source: articleText,
-      wordCount: wordCount(articleText),
       excerpt: "",
       html,
       uncommitted: false,
-      revisions: [],
+      revisions: await getRevisionList(bock.articleRoot, path),
     };
   } else {
     const children = Object.values(await getEntities(articleRoot, path, 1));
@@ -342,7 +399,8 @@ export const createSingleEntity = async (
 
   if (entity.type === "article") {
     await createRawArticle(bock, data);
-    await createRevision(bock, data);
+    await createRevisionList(bock, data);
+    await createRevisions(bock, data);
   }
 };
 

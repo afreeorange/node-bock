@@ -27,7 +27,7 @@ import { getArguments } from "./cli";
     articleRoot,
     outputFolder,
     entities,
-    listOfEntities: sort(Object.values(entities)).asc((e) => e.name),
+    listOfEntities: sort(Object.values(entities)).desc((e) => e.modified),
     listOfPaths: Object.keys(entities),
     prettify,
   };

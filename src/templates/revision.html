@@ -2,6 +2,16 @@
 
 {% block main %}
 {% include "./__hierarchy.html" %}
-<h1>{{ entity.name }} <span>Revisions</span></h1>
-<h2>Sorry, I haven't finished implementing this yet&hellip;</h2>
+
+<h1>{{ name }} <span>Revision {{ revisionData.shortId }}</span></h1>
+
+<main>
+  {{ revisionData.html | safe }}
+</main>
+
+<!-- <hr />
+<pre>
+    <code>{{ revision.source | safe }}</code>
+</pre> -->
+
 {% endblock main %}

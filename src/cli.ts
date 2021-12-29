@@ -1,5 +1,8 @@
+import { existsSync } from "fs";
+
 import { Command } from "commander";
 
+import { removeTrailingSlashes, trim } from "./helpers";
 import packageJson from "../package.json";
 
 const CLI = new Command();
@@ -22,11 +25,22 @@ CLI.version(packageJson.version)
 
 export const getArguments = () => {
   CLI.parse(process.argv);
-  const { articleRoot, outputFolder, watch, prettify } = CLI.opts();
+  let { articleRoot, outputFolder, watch, prettify } = CLI.opts();
+
+  // Check if the articles and output folders exist
+  if (!existsSync(articleRoot)) {
+    console.error(`The supplied article root does not exist: ${articleRoot}`);
+  } else {
+    articleRoot as string;
+  }
+
+  if (!existsSync(outputFolder)) {
+    console.error(`The supplied output folder does not exist: ${outputFolder}`);
+  }
 
   return {
-    articleRoot,
-    outputFolder,
+    articleRoot: removeTrailingSlashes(trim(articleRoot)),
+    outputFolder: removeTrailingSlashes(trim(outputFolder)),
     watch,
     prettify,
   };

@@ -28,11 +28,29 @@ export type Folder = Entity & {
 
 export type Article = Entity & {
   source: string;
-  wordCount: number;
   excerpt: string;
   html: string;
   uncommitted: boolean;
-  revisions: string[];
+  revisions: RevisionList;
+};
+
+export type RevisionList = {
+  id: string;
+  shortId: string;
+  date: Date;
+  subject: string;
+  body: string;
+  author: {
+    name: string;
+    email: string;
+  };
+}[];
+
+export type Revision = {
+  id: string;
+  shortId: string;
+  source: string;
+  html: string;
 };
 
 export type Bock = {
@@ -58,6 +76,7 @@ export type TemplateVariables = {
     | "random"
     | "raw"
     | "revision"
+    | "revision-list"
     | "search";
   uri: string;
   packageInfo?: {
