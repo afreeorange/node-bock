@@ -1,8 +1,14 @@
 import { readFile } from "fs/promises";
 
 import fg from "fast-glob";
+import { v5 as uuidv5 } from "uuid";
 
-import { ASSETS_FOLDER, ENTITIES_TO_IGNORE, MAX_DEPTH } from "./constants";
+import {
+  ASSETS_FOLDER,
+  ENTITIES_TO_IGNORE,
+  MAX_DEPTH,
+  UUID_NAMESPACE,
+} from "./constants";
 import {
   generateHierarchyFrom,
   generateIdFrom,
@@ -11,7 +17,8 @@ import {
 } from "./helpers";
 import parser from "./parser";
 import { Bock, Entity } from "./types";
-import { getCreationDate, getDates, getModifiationDate } from "./repository";
+import { getDates } from "./repository";
+import { inPlaceSort } from "fast-sort";
 
 export const getReadme = async ({ articleRoot }: Bock, entity: Entity) => {
   let ret: {
@@ -44,7 +51,7 @@ export const getEntities = async (
 ): Promise<Record<string, Entity>> => {
   let ret: Record<string, Entity> = {};
 
-  const filteredList = (
+  let sortedAndFilteredList = (
     await fg(`${articleRoot}${prefix !== "" ? "/" + prefix : ""}/**`, {
       deep: maxDepth,
       followSymbolicLinks: false,
@@ -59,26 +66,54 @@ export const getEntities = async (
       !e.path.includes(ASSETS_FOLDER),
   );
 
+  // Note: cannot do any sorting here for obvious reasons...
   await Promise.all(
-    filteredList.map(async (e) => {
+    sortedAndFilteredList.map(async (e) => {
       let path = e.path.replace(`${articleRoot}/`, "");
       let { created, modified } = await getDates(articleRoot, e.path);
 
       ret[path] = {
-        id: generateIdFrom(articleRoot, e.path),
         created,
         hierarchy: generateHierarchyFrom(articleRoot, e.path),
+        id: generateIdFrom(articleRoot, e.path),
         modified,
-        type: e.dirent.isFile() ? "article" : "folder",
-        sizeInBytes: e.stats!.size,
         name: removeExtension(e.name),
+        path: e.path.replace(`${articleRoot}/`, ""),
+        sizeInBytes: e.stats!.size,
+        type: e.dirent.isFile() ? "article" : "folder",
         uri: removeExtension(
           generatePrettyPath(e.path.replace(`${articleRoot}/`, "")),
         ),
-        path: e.path.replace(`${articleRoot}/`, ""),
       };
     }),
   );
+
+  /**
+   * Now add a special entity: the root of the articles. Only do this at the
+   * root prefix! This function is used to map things at sub-trees as well!
+   *
+   * Note that we don't care about the creation and modification dates and set
+   * them to Epoch.
+   */
+  if (prefix === "" && maxDepth > 1) {
+    ret["ROOT"] = {
+      created: new Date(0),
+      hierarchy: [
+        {
+          name: "ROOT",
+          type: "folder",
+          uri: "",
+        },
+      ],
+      id: uuidv5(`/ROOT`, UUID_NAMESPACE),
+      modified: new Date(0),
+      name: "Article Root",
+      path: "",
+      sizeInBytes: 0,
+      type: "folder",
+      uri: "ROOT",
+    };
+  }
 
   return ret;
 };

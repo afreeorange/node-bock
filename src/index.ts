@@ -6,13 +6,13 @@ import chokidar from "chokidar";
 import { sort } from "fast-sort";
 
 import {
-  createEntities,
+  writeEntities,
   createSingleEntity,
-  copyAssets,
-  createHome,
-  createSearch,
+  writeAssets,
+  writeHome,
+  writeSearch,
   createRoot,
-  createRandom,
+  writeRandom,
 } from "./writers";
 import { createDatabase } from "./database";
 import { getEntities } from "./readers";
@@ -27,7 +27,17 @@ import { getArguments } from "./cli";
     articleRoot,
     outputFolder,
     entities,
-    listOfEntities: sort(Object.values(entities)).desc((e) => e.modified),
+
+    /**
+     * NOTE: Sorting here by path. This is what most pages require. The home
+     * page requires sorting by last modified.
+     */
+    listOfEntities: sort(Object.values(entities)).asc("path"),
+
+    /**
+     * NOTE: This is unused as of now. Might use it to make trees on the
+     * articles page later.
+     */
     listOfPaths: Object.keys(entities),
     prettify,
   };
@@ -40,22 +50,19 @@ import { getArguments } from "./cli";
   console.log(`Found ${bock.listOfEntities.length} entities in ${articleRoot}`);
   console.log(`Output folder is ${outputFolder}`);
 
-  await createEntities(bock);
+  await writeEntities(bock);
   console.log(`Finished writing ${bock.listOfEntities.length} entities`);
 
-  await createHome(bock);
+  await writeHome(bock);
   console.log(`Rendered Homepage`);
 
-  await createSearch(bock);
+  await writeSearch(bock);
   console.log(`Rendered Search`);
 
-  await createRoot(bock);
-  console.log(`Rendered Root`);
-
-  await createRandom(bock);
+  await writeRandom(bock);
   console.log(`Rendered Random`);
 
-  copyAssets(bock);
+  writeAssets(bock);
   console.log(`Copied static assets`);
 
   createDatabase(bock);

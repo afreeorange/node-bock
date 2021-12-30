@@ -1,4 +1,4 @@
-import { writeFile, readFile, stat } from "fs/promises";
+import { writeFile, readFile } from "fs/promises";
 
 import { ncp } from "ncp";
 import { v5 as uuidv5 } from "uuid";
@@ -20,7 +20,7 @@ import { getEntities, getReadme } from "./readers";
 import { Article, Bock, Entity } from "./types";
 import { getDates, getRevisionList, getRevision } from "./repository";
 
-export const createSearch = async (bock: Bock) => {
+export const writeSearch = async (bock: Bock) => {
   const { outputFolder, listOfEntities, prettify } = bock;
 
   await mkdirp(`${outputFolder}/search`);
@@ -34,27 +34,25 @@ export const createSearch = async (bock: Bock) => {
         name: "Search Articles",
         uri: "/search",
 
-        articles: sort(listOfEntities).asc((e) => e.path),
+        // Don't want to render the ROOT entity. It's special.
+        articles: listOfEntities.filter((e) => e.uri !== "ROOT"),
       },
       prettify,
     }),
   );
 };
 
-export const createHome = async (bock: Bock) => {
+export const writeHome = async (bock: Bock) => {
   const { entities, articleRoot, outputFolder, prettify, listOfEntities } =
     bock;
 
   let html;
   let source;
-  let stats;
 
   if (Object.keys(entities).includes(HOME_PAGE_DOCUMENT)) {
     source = (
       await readFile(`${articleRoot}/${HOME_PAGE_DOCUMENT}`)
     ).toString();
-
-    stats = await stat(`${articleRoot}/${HOME_PAGE_DOCUMENT}`);
   } else {
     source = `(Could not find a \`${HOME_PAGE_DOCUMENT}\`. You should make one!)`;
 
@@ -90,7 +88,6 @@ export const createHome = async (bock: Bock) => {
     type: "home",
     uri: "Home",
     source,
-    excerpt: "",
     html,
     uncommitted: false,
     revisions: [],
@@ -106,97 +103,19 @@ export const createHome = async (bock: Bock) => {
         uri: "/",
 
         entity,
-        recent: listOfEntities.slice(0, MAX_RECENT_ARTICLES),
+
+        // Remove the root entity from the list of recents.
+        recent: sort(listOfEntities)
+          .desc("modified")
+          .slice(0, MAX_RECENT_ARTICLES + 1)
+          .filter((e) => e.uri !== "ROOT"),
       },
       prettify,
     }),
   );
 };
 
-export const createEntity = async (bock: Bock, entity: Entity) => {
-  const { outputFolder, prettify } = bock;
-
-  await writeFile(
-    `${outputFolder}/${entity.uri}/index.html`,
-    render({
-      template: `entity.html`,
-      variables: {
-        type: entity.type,
-        name: entity.name,
-        uri: entity.uri,
-
-        entity,
-      },
-      prettify,
-    }),
-  );
-};
-
-export const createRoot = async (bock: Bock) => {
-  const { articleRoot, outputFolder, prettify } = bock;
-
-  const rootEntities = Object.values(await getEntities(articleRoot, "", 1));
-
-  const entity = {
-    created: null,
-    hierarchy: [
-      {
-        name: "ROOT",
-        type: "folder",
-        uri: "",
-      },
-    ],
-    id: uuidv5(`/ROOT`, UUID_NAMESPACE),
-    modified: null,
-    name: "Article Root",
-    path: "/",
-    sizeInBytes: 0,
-    type: "folder",
-    uri: "ROOT",
-    children: {
-      articles: rootEntities
-        .filter((c) => c.type === "article")
-        .map((c) => ({
-          name: c.name,
-          type: c.type,
-          path: c.path,
-          uri: c.uri,
-        })),
-      folders: rootEntities
-        .filter((c) => c.type === "folder")
-        .map((c) => ({
-          name: c.name,
-          type: c.type,
-          path: c.path,
-          uri: c.uri,
-        })),
-    },
-  };
-
-  await mkdirp(`${outputFolder}/ROOT`);
-
-  await writeFile(
-    `${outputFolder}/ROOT/index.html`,
-    render({
-      template: `entity.html`,
-      variables: {
-        type: "folder",
-        name: entity.name,
-        uri: entity.uri,
-
-        entity,
-      },
-      prettify,
-    }),
-  );
-
-  await writeFile(
-    `${outputFolder}/ROOT/index.json`,
-    JSON.stringify(entity, null, JSON_PADDING),
-  );
-};
-
-export const createRandom = async ({
+export const writeRandom = async ({
   listOfEntities,
   outputFolder,
   prettify,
@@ -220,7 +139,7 @@ export const createRandom = async ({
   );
 };
 
-export const createRawArticle = async (bock: Bock, article: Article) => {
+export const writeArticle__Raw = async (bock: Bock, article: Article) => {
   const { outputFolder, prettify } = bock;
 
   await mkdirp(`${outputFolder}/${article.uri}/raw`);
@@ -244,13 +163,13 @@ export const createRawArticle = async (bock: Bock, article: Article) => {
   );
 };
 
-export const createRevisionList = async (
+export const writeArticle__RevisionList = async (
   bock: Bock,
   article: Article,
 ): Promise<void> => {
   const { outputFolder, prettify } = bock;
-  const revisionListFolder = `${outputFolder}/${article.uri}/revisions`;
 
+  const revisionListFolder = `${outputFolder}/${article.uri}/revisions`;
   await mkdirp(revisionListFolder);
 
   await writeFile(
@@ -274,7 +193,7 @@ export const createRevisionList = async (
   );
 };
 
-export const createRevisions = async (
+export const writeArticle__Revisions = async (
   bock: Bock,
   article: Article,
 ): Promise<void> => {
@@ -317,11 +236,11 @@ export const createRevisions = async (
   );
 };
 
-export const createSingleEntity = async (
+export const writeEntity = async (
   bock: Bock,
   entity: Entity,
 ): Promise<void> => {
-  const { outputFolder, articleRoot } = bock;
+  const { outputFolder, articleRoot, prettify } = bock;
 
   const {
     created,
@@ -358,7 +277,6 @@ export const createSingleEntity = async (
     data = {
       ...data,
       source: articleText,
-      excerpt: "",
       html,
       uncommitted: false,
       revisions: await getRevisionList(bock.articleRoot, path),
@@ -369,42 +287,59 @@ export const createSingleEntity = async (
     data = {
       ...data,
       children: {
-        articles: children
-          .filter((c) => c.type === "article")
-          .map((c) => ({
-            name: c.name,
-            type: c.type,
-            path: c.path,
-            uri: c.uri,
-          })),
-        folders: children
-          .filter((c) => c.type === "folder")
-          .map((c) => ({
-            name: c.name,
-            type: c.type,
-            path: c.path,
-            uri: c.uri,
-          })),
+        articles: sort(
+          children
+            .filter((c) => c.type === "article")
+            .map((c) => ({
+              name: c.name,
+              type: c.type,
+              path: c.path,
+              uri: c.uri,
+            })),
+        ).asc("path"),
+        folders: sort(
+          children
+            .filter((c) => c.type === "folder")
+            .map((c) => ({
+              name: c.name,
+              type: c.type,
+              path: c.path,
+              uri: c.uri,
+            })),
+        ).asc("path"),
       },
       readme: await getReadme(bock, entity),
     };
   }
 
   await writeFile(
+    `${outputFolder}/${entity.uri}/index.html`,
+    render({
+      template: `entity.html`,
+      variables: {
+        type: entity.type,
+        name: entity.name,
+        uri: entity.uri,
+
+        entity: data,
+      },
+      prettify,
+    }),
+  );
+
+  await writeFile(
     `${entityToMake}/index.json`,
     JSON.stringify(data, null, JSON_PADDING),
   );
 
-  await createEntity(bock, data);
-
   if (entity.type === "article") {
-    await createRawArticle(bock, data);
-    await createRevisionList(bock, data);
-    await createRevisions(bock, data);
+    await writeArticle__Raw(bock, data);
+    await writeArticle__RevisionList(bock, data);
+    await writeArticle__Revisions(bock, data);
   }
 };
 
-export const createEntities = async (bock: Bock): Promise<void> => {
+export const writeEntities = async (bock: Bock): Promise<void> => {
   const { listOfEntities } = bock;
 
   const bar = new cliProgress.Bar({
@@ -415,7 +350,7 @@ export const createEntities = async (bock: Bock): Promise<void> => {
   bar.start(listOfEntities.length, 0, { entity: "N/A" });
 
   for await (const e of listOfEntities) {
-    await createSingleEntity(bock, e);
+    await writeEntity(bock, e);
 
     bar.increment({
       entity: e.name,
@@ -427,7 +362,7 @@ export const createEntities = async (bock: Bock): Promise<void> => {
    */
   // await Promise.all(
   //   listOfEntities.map(async (e) => {
-  //     await createSingleEntity(articleRoot, outputFolder, e);
+  //     await writeEntity(articleRoot, outputFolder, e);
   //   }),
   // );
 
@@ -438,7 +373,7 @@ export const createEntities = async (bock: Bock): Promise<void> => {
  * Note: `fs-extra` did not work with `pkg` and the compiled executable so I
  * had to resort to this ancient-ass (but simple) package instead.
  */
-export const copyAssets = ({ articleRoot, outputFolder }: Bock) => {
+export const writeAssets = ({ articleRoot, outputFolder }: Bock) => {
   ncp(
     `${articleRoot}/${ASSETS_FOLDER}`,
     `${outputFolder}/${ASSETS_FOLDER}`,

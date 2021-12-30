@@ -1,10 +1,12 @@
 # Bock
 
-A static wiki generator. WIP. [See it in action here](https://wiki.nikhil.io). 
+A static wiki generator. Massive WIP. [See it in action here](https://wiki.nikhil.io). 
 
-```bash
-yarn exe --help
-```
+## License
+
+[WTFPL](http://www.wtfpl.net/)
+
+---
 
 ## TODO
 

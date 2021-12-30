@@ -273,73 +273,6 @@ h2 > span {
   vertical-align: middle;
 }
 
-.container {
-  margin: 0 auto;
-  max-width: var(--max-width);
-  animation: fadeIn var(--transition-duration) ease-in-out;
-}
-
-.container header > h1 {
-  margin-top: 0.4em;
-}
-
-.container.raw main h1 span:nth-of-type(2) a {
-  color: white;
-  text-decoration: none;
-}
-.container.raw main h1 span:nth-of-type(2) {
-  background-color: var(--color-foreground);
-}
-.container.raw main h1 span:nth-of-type(2):hover {
-  background-color: var(--color-highlight-light);
-}
-
-.container.random main {
-  background-color: red;
-  width: 15em;
-  height: 15em;
-  margin: 3em auto;
-
-  background-color: var(--color-highlight);
-
-  mask-repeat: no-repeat;
-  mask-position: center;
-  -webkit-mask-image: url(/img/twenty-die.svg);
-  mask-image: url(/img/twenty-die.svg);
-
-  animation: rotation 4s infinite cubic-bezier(1, 2.5, 0, 1.5);
-}
-
-.container.search main ul {
-  margin: var(--root-spacing) 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-.container.search main ul a {
-  color: var(--color-foreground);
-  text-decoration: none;
-}
-
-.container.search main ul a:hover {
-  color: var(--color-highlight);
-  text-decoration: underline;
-}
-
-.container.search main ul li:not(:first-child):not(:last-child) {
-  border-top: 1px dotted var(--color-grey-light);
-  padding: 0.25em 0;
-}
-
-.container.search main ul li small {
-  color: var(--color-grey);
-}
-
-.container.search main ul[data-content="results"] li {
-  margin: 1em 0;
-  border-top: none !important;
-}
-
 /* General main styles */
 
 main h1 {
@@ -399,6 +332,7 @@ footer li a::before {
   height: 1em;
   content: "";
   display: inline-block;
+  margin-left: -1.25em;
 
   background-color: var(--color-highlight);
   vertical-align: middle;
@@ -406,6 +340,84 @@ footer li a::before {
 
   -webkit-mask-image: url(/img/bock.svg);
   mask-image: url(/img/bock.svg);
+}
+
+/* Various containers */
+
+.container {
+  margin: 0 auto;
+  max-width: var(--max-width);
+  animation: fadeIn var(--transition-duration) ease-in-out;
+}
+
+.container header > h1 {
+  margin-top: 0.4em;
+}
+
+.container.raw main h1 span:nth-of-type(2) a {
+  color: white;
+  text-decoration: none;
+}
+.container.raw main h1 span:nth-of-type(2) {
+  background-color: var(--color-foreground);
+}
+.container.raw main h1 span:nth-of-type(2):hover {
+  background-color: var(--color-highlight-light);
+}
+
+.container.random main {
+  background-color: var(--color-highlight);
+  width: 15em;
+  height: 15em;
+  margin: 3em auto;
+
+  background-color: var(--color-highlight);
+
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url(/img/twenty-die.svg);
+  mask-image: url(/img/twenty-die.svg);
+
+  animation: rotation 4s infinite cubic-bezier(1, 2.5, 0, 1.5);
+}
+
+.container.search main ul {
+  margin: var(--root-spacing) 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.container.search main ul a {
+  color: var(--color-foreground);
+  text-decoration: none;
+}
+
+.container.search main ul a:hover {
+  color: var(--color-highlight);
+  text-decoration: underline;
+}
+
+.container.search main ul li:not(:first-child) {
+  border-top: 1px dotted var(--color-grey-light);
+  padding: 0.25em 0;
+}
+
+.container.search main ul li small {
+  color: var(--color-grey);
+}
+
+.container.search main ul[data-content="results"] li {
+  margin: 1em 0;
+  border-top: none !important;
+}
+
+.container.revision-list main ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.container.revision-list main ul li:not(:first-child):not(:last-child) {
+  margin: 1em 0;
 }
 
 /* Responsive and Animations */
@@ -431,5 +443,9 @@ footer li a::before {
 @media all and (max-width: 700px) {
   :root {
     --max-width: 95%;
+  }
+
+  footer li a::before {
+    margin-left: 0;
   }
 }

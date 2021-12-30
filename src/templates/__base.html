@@ -54,6 +54,10 @@
             {% if type === "revision" %}
             <li><a href="/{{ entity.uri }}/revisions/{{ revisionData.shortId }}/index.json"><span>JSON</span></a></li>
             {% endif %}
+
+            {% if type === "folder" %}
+            <li><a href="/{{ entity.uri }}//index.json"><span>JSON</span></a></li>
+            {% endif %}
           </ul>
         </nav>
       </header>

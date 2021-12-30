@@ -28,7 +28,6 @@ export type Folder = Entity & {
 
 export type Article = Entity & {
   source: string;
-  excerpt: string;
   html: string;
   uncommitted: boolean;
   revisions: RevisionList;
