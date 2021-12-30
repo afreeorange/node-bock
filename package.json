@@ -1,6 +1,6 @@
 {
   "name": "bock",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "author": "Nikhil Anand <mail@nikhil.io> (https://nikhil.io)",
   "license": "MIT",
   "main": "./dist/src/index.js",
@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "chokidar": "^3.5.2",
-    "cli-progress": "^3.9.1",
     "commander": "^8.3.0",
     "date-fns": "^2.25.0",
     "fast-glob": "^3.2.7",

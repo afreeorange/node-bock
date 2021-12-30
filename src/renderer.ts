@@ -1,4 +1,3 @@
-import path from "path";
 import nunjucks from "nunjucks";
 import numeral from "numeral";
 import formatDate from "date-fns/format";

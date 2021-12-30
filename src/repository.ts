@@ -49,7 +49,7 @@ export const getRevisionList = async (
   articlePath: string,
 ): Promise<RevisionList> => {
   const path = articlePath.replace(`${articleRoot}/`, "");
-  let revisionList;
+  let revisionList: RevisionList;
 
   try {
     /**
@@ -65,10 +65,14 @@ export const getRevisionList = async (
 
     /**
      * Output does not have commas. Add them and make a list before parsing as
-     * JSON.
+     * JSON. Then parse the dates before returning the list.
      */
-    revisionList = `[${stdout.split("\n").join(",")}]`;
-    return JSON.parse(revisionList);
+    revisionList = JSON.parse(`[${stdout.split("\n").join(",")}]`);
+
+    return revisionList.map((r) => ({
+      ...r,
+      date: new Date(r.date),
+    }));
   } catch (error) {
     console.error(`Revision List error: ${articlePath}: ${error}`);
     return [];

@@ -16,9 +16,12 @@ A static wiki generator. Massive WIP. [See it in action here](https://wiki.nikhi
 * [ ] remove trailing slashes
 * [ ] LR local server
 * [x] HTML generation
+* [ ] Change URI param with search
+* [ ] Use `<input type=search>`
 * [x] SQL generation job
 * [x] SQL search JavaScript
 * [ ] Tags?
+* [ ] Docstrings
 * [ ] Stats
 * [ ] No revisions, current version message....
 * [ ] Folder view sort articles by name
@@ -64,7 +67,7 @@ Doing this on a CircleCI/Ubuntu 20.04 image `cimg/node:14.15.2`:
 ### Manual Sync
 
 ```bash
-rm -rf ~/personal/wiki.nikhil.io.articles.out/* && npx ts-node -T src/index.ts -a ~/personal/wiki.nikhil.io.articles -o ~/personal/wiki.nikhil.io.articles.out && pushd ~/personal/wiki.nikhil.io.articles.out && find . -type f -exec gzip -9 '{}' \; -exec mv '{}.gz' '{}' \;  && aws s3 sync . s3://wiki.nikhil.io/ --delete --exclude "*.DS_Store*" --content-encoding gzip && popd
+rm -rf ~/personal/wiki.nikhil.io.articles.out/* && npx ts-node -T src/index.ts -a ~/personal/wiki.nikhil.io.articles -o ~/personal/wiki.nikhil.io.articles.out -p && pushd ~/personal/wiki.nikhil.io.articles.out && find . -type f -exec gzip -9 '{}' \; -exec mv '{}.gz' '{}' \;  && aws s3 sync . s3://wiki.nikhil.io/ --delete --exclude "*.DS_Store*" --content-encoding gzip && popd
 ```
 
 #### Build the Executable
@@ -105,3 +108,22 @@ aws s3 sync . s3://wiki.nikhil.io/ --content-encoding gzip --delete --profile ni
 ```
 
 directory-tree
+
+```javascript
+  // const bar = new cliProgress.Bar({
+  //   format: "[{bar}] {value} of {total} ({entity})",
+  //   synchronousUpdate: false,
+  // });
+
+  // bar.start(listOfEntities.length, 0, { entity: "N/A" });
+
+  // for await (const e of listOfEntities) {
+  //   await writeEntity(bock, e);
+
+  //   bar.increment({
+  //     entity: e.name,
+  //   });
+  // }
+
+  // bar.stop();
+```

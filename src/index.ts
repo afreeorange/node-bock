@@ -7,11 +7,10 @@ import { sort } from "fast-sort";
 
 import {
   writeEntities,
-  createSingleEntity,
+  writeEntity,
   writeAssets,
   writeHome,
   writeSearch,
-  createRoot,
   writeRandom,
 } from "./writers";
 import { createDatabase } from "./database";
@@ -50,8 +49,9 @@ import { getArguments } from "./cli";
   console.log(`Found ${bock.listOfEntities.length} entities in ${articleRoot}`);
   console.log(`Output folder is ${outputFolder}`);
 
+  console.log(`Going to write ${bock.listOfEntities.length} articles...`);
   await writeEntities(bock);
-  console.log(`Finished writing ${bock.listOfEntities.length} entities`);
+  console.log(`Finished writing articles`);
 
   await writeHome(bock);
   console.log(`Rendered Homepage`);
@@ -78,7 +78,7 @@ import { getArguments } from "./cli";
       let _path = path.replace(`${articleRoot}/`, "");
       console.log(`${_path} changed... re-rendering`);
 
-      await createSingleEntity(bock, entities[_path]);
+      await writeEntity(bock, entities[_path]);
     });
   }
 })();

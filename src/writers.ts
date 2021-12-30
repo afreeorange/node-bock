@@ -2,7 +2,6 @@ import { writeFile, readFile } from "fs/promises";
 
 import { ncp } from "ncp";
 import { v5 as uuidv5 } from "uuid";
-import cliProgress from "cli-progress";
 import highlight from "highlight.js";
 import { sort } from "fast-sort";
 
@@ -342,31 +341,19 @@ export const writeEntity = async (
 export const writeEntities = async (bock: Bock): Promise<void> => {
   const { listOfEntities } = bock;
 
-  const bar = new cliProgress.Bar({
-    format: "[{bar}] {value} of {total} ({entity})",
-    synchronousUpdate: false,
-  });
-
-  bar.start(listOfEntities.length, 0, { entity: "N/A" });
-
-  for await (const e of listOfEntities) {
-    await writeEntity(bock, e);
-
-    bar.increment({
-      entity: e.name,
-    });
-  }
+  await Promise.all(
+    listOfEntities.map(async (e) => {
+      await writeEntity(bock, e);
+    }),
+  );
 
   /**
-   * This is the 'typical' way but the progress bar doesn't work...
+   * This is slow. Why?
    */
-  // await Promise.all(
-  //   listOfEntities.map(async (e) => {
-  //     await writeEntity(articleRoot, outputFolder, e);
-  //   }),
-  // );
-
-  bar.stop();
+  // for await (const e of listOfEntities) {
+  //   console.log(`Writing ${e.name}`);
+  //   await writeEntity(bock, e);
+  // }
 };
 
 /**

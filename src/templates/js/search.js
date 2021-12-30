@@ -1,8 +1,3 @@
-/**
- * TODO: Use <input type=search>
- * TODO: Change URI param with term
- */
-
 const REMOTE_DATABASE = "/entities.db";
 
 (async () => {
@@ -51,17 +46,17 @@ const REMOTE_DATABASE = "/entities.db";
     if (term && term.length >= 3) {
       // https://sqlite.org/forum/info/00d53dbed15f5e5a
       const thingSearchStatement = db.prepare(`
-             SELECT
-               uri,
-               name,
-               highlight(articles_fts, 6, '>>>', '<<<') as highlightedPath,
-               snippet(articles_fts, 1, '>>>', '<<<', '...', 50) as content,
-               path
-             FROM articles_fts
-             WHERE articles_fts MATCH 'path:${term}* OR content:${term}*'
-             ORDER BY RANK
-             LIMIT 100
-             `);
+      SELECT
+        uri,
+        name,
+        highlight(articles_fts, 6, '>>>', '<<<') as highlightedPath,
+        snippet(articles_fts, 1, '>>>', '<<<', '...', 50) as content,
+        path
+      FROM articles_fts
+      WHERE articles_fts MATCH 'path:${term}* OR content:${term}*'
+      ORDER BY RANK
+      LIMIT 100
+      `);
 
       let rows = [];
       while (thingSearchStatement.step()) {

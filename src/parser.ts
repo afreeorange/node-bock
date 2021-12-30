@@ -1,6 +1,6 @@
 import MarkdownIt from "markdown-it";
 
-const md = new MarkdownIt({
+const markdownParser = new MarkdownIt({
   breaks: false,
   html: true,
   linkify: true,
@@ -15,4 +15,4 @@ const md = new MarkdownIt({
     removeMarker: true,
   });
 
-export default md;
+export default markdownParser;

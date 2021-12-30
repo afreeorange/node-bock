@@ -70,25 +70,25 @@ export const createDatabase = async (bock: Bock) => {
     END;`);
 
   const insertStatement = db.prepare(`
- INSERT INTO articles (
-    id,
-    content,
-    created,
-    modified,
-    name,
-    uri,
-    path
- )
- VALUES (
-    $id,
-    $content,
-    $created,
-    $modified,
-    $name,
-    $uri,
-    $path
- )
- `);
+    INSERT INTO articles (
+      id,
+      content,
+      created,
+      modified,
+      name,
+      uri,
+      path
+    )
+    VALUES (
+      $id,
+      $content,
+      $created,
+      $modified,
+      $name,
+      $uri,
+      $path
+    )
+  `);
 
   bock.listOfEntities.map((e) => {
     if (e.type === "article") {

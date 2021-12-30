@@ -5,13 +5,10 @@
 
 <h1>{{ name }} <span>Revision {{ revisionData.shortId }}</span></h1>
 
-<main>
-  {{ revisionData.html | safe }}
-</main>
+{{ revisionData.html | safe }}
 
-<!-- <hr />
-<pre>
-    <code>{{ revision.source | safe }}</code>
-</pre> -->
+<hr />
+
+<pre><code>{{ revision.source | safe }}</code></pre>
 
 {% endblock main %}

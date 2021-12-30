@@ -1,14 +1,8 @@
 import { readFile } from "fs/promises";
 
 import fg from "fast-glob";
-import { v5 as uuidv5 } from "uuid";
 
-import {
-  ASSETS_FOLDER,
-  ENTITIES_TO_IGNORE,
-  MAX_DEPTH,
-  UUID_NAMESPACE,
-} from "./constants";
+import { ASSETS_FOLDER, ENTITIES_TO_IGNORE, MAX_DEPTH } from "./constants";
 import {
   generateHierarchyFrom,
   generateIdFrom,
@@ -18,7 +12,6 @@ import {
 import parser from "./parser";
 import { Bock, Entity } from "./types";
 import { getDates } from "./repository";
-import { inPlaceSort } from "fast-sort";
 
 export const getReadme = async ({ articleRoot }: Bock, entity: Entity) => {
   let ret: {
@@ -105,7 +98,7 @@ export const getEntities = async (
           uri: "",
         },
       ],
-      id: uuidv5(`/ROOT`, UUID_NAMESPACE),
+      id: generateIdFrom(articleRoot, "/ROOT"),
       modified: new Date(0),
       name: "Article Root",
       path: "",

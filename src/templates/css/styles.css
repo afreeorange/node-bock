@@ -420,7 +420,7 @@ footer li a::before {
   margin: 1em 0;
 }
 
-/* Responsive and Animations */
+/* Responsive Behaviour and Animations */
 
 @keyframes rotation {
   from {

@@ -1,6 +1,7 @@
 .DS_Store
+*.tgz
 dist
 index-*
 node_modules
 node-bock
-*.tgz
+yarn-error.log

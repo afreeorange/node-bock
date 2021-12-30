@@ -2,22 +2,21 @@
 
 {% block main %}
 {% include "./__hierarchy.html" %}
+
 <h1>{{ entity.name }} <span>Revisions</span></h1>
 
-<main>
-  <ul>
-    {% for revision in entity.revisions %}
-    <li>
-      <code><a href="{{ revision.shortId }}" title="See revision {{ revision.shortId }}">{{ revision.shortId }}</a></a></code>
+<ul>
+  {% for revision in entity.revisions %}
+  <li>
+    <code><a href="{{ revision.shortId }}" title="See revision {{ revision.shortId }}">{{ revision.shortId }}</a></a></code>
+    <br />
+    <small>
+      {{ revision.date | date("PPPP 'at' h:mm bbb") }}
       <br />
-      <small>
-        {{ revision.date }}
-        <br />
-        by {{ revision.author.name }} <code>{{ revision.author.email }}</code>
-      </small>
-    </li>
-    {% endfor %}
-  </ul>
-</main>
+      by {{ revision.author.name }} <code>{{ revision.author.email }}</code>
+    </small>
+  </li>
+  {% endfor %}
+</ul>
 
 {% endblock main %}
