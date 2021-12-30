@@ -29,7 +29,6 @@
     "outputPath": "dist"
   },
   "dependencies": {
-    "chalk": "^4.1.2",
     "chokidar": "^3.5.2",
     "cli-progress": "^3.9.1",
     "commander": "^8.3.0",

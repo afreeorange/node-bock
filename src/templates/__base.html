@@ -33,7 +33,7 @@
             <li><a href="/random"{% if type === "random" %}class="active"{% endif %}><span>Random</span></a></li>
 
             {# See TemplateVariables in types.ts for a full list of things #}
-            {% if type === "article" %}
+            {% if type === "article" or type === "home" %}
             <li><a href="/{{ entity.uri }}/raw"{% if type === "raw" %}class="active"{% endif %}><span>Raw</span></a></li>
             <li><a href="/{{ entity.uri }}/revisions"{% if type === "revision-list" %}class="active"{% endif %}><span>Revisions</span></a></li>
             <li><a href="/{{ entity.uri }}/index.json"><span>JSON</span></a></li>

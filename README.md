@@ -18,8 +18,11 @@ yarn exe --help
 * [x] SQL search JavaScript
 * [ ] Tags?
 * [ ] Stats
+* [ ] No revisions, current version message....
+* [ ] Folder view sort articles by name
+* [ ] Collapsible view in /search - hierarchy
 * [ ] Server
-* [ ] Latest entries
+* [x] Latest entries
 * [x] List of articles
 * [ ] Dark Mode
 * [x] RAW page

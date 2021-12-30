@@ -327,12 +327,17 @@ h2 > span {
 }
 
 .container.search main ul li:not(:first-child):not(:last-child) {
-  margin: 1em 0;
-  list-style-type: none;
+  border-top: 1px dotted var(--color-grey-light);
+  padding: 0.25em 0;
 }
 
 .container.search main ul li small {
   color: var(--color-grey);
+}
+
+.container.search main ul[data-content="results"] li {
+  margin: 1em 0;
+  border-top: none !important;
 }
 
 /* General main styles */
