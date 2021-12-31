@@ -21,11 +21,12 @@ CLI.version(packageJson.version)
   .option("-b, --build", "Build all the static output", false)
   .option("-w, --watch", "Watch the output folder for changes", false)
   .option("-c, --clean", "Clear output folder before writing", false)
+  .option("-s, --progress", "View article generation progress (slow)", false)
   .option("-p, --prettify", "Prettify output HTML (slow)", false);
 
 export const getArguments = () => {
   CLI.parse(process.argv);
-  let { articleRoot, outputFolder, watch, prettify } = CLI.opts();
+  let { articleRoot, outputFolder, watch, prettify, progress } = CLI.opts();
 
   // Check if the articles and output folders exist
   if (!existsSync(articleRoot)) {
@@ -43,5 +44,6 @@ export const getArguments = () => {
     outputFolder: removeTrailingSlashes(trim(outputFolder)),
     watch,
     prettify,
+    progress,
   };
 };

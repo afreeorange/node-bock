@@ -33,7 +33,7 @@ export type Article = Entity & {
   revisions: RevisionList;
 };
 
-export type RevisionList = {
+export type ShortRevision = {
   id: string;
   shortId: string;
   date: Date;
@@ -43,7 +43,9 @@ export type RevisionList = {
     name: string;
     email: string;
   };
-}[];
+};
+
+export type RevisionList = ShortRevision[];
 
 export type Revision = {
   id: string;
@@ -59,6 +61,7 @@ export type Bock = {
   listOfEntities: Entity[];
   listOfPaths: string[];
   prettify: boolean;
+  showProgress: boolean;
 };
 
 /**

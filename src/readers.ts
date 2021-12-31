@@ -13,7 +13,7 @@ import parser from "./parser";
 import { Bock, Entity } from "./types";
 import { getDates } from "./repository";
 
-export const getReadme = async ({ articleRoot }: Bock, entity: Entity) => {
+export const readme = async ({ articleRoot }: Bock, entity: Entity) => {
   let ret: {
     source: string;
     html: string;
@@ -37,7 +37,7 @@ export const getReadme = async ({ articleRoot }: Bock, entity: Entity) => {
   return ret;
 };
 
-export const getEntities = async (
+export const entities = async (
   articleRoot: string,
   prefix: string = "",
   maxDepth: number = MAX_DEPTH,
@@ -110,3 +110,5 @@ export const getEntities = async (
 
   return ret;
 };
+
+export default entities;

@@ -5,23 +5,32 @@ import { writeFile } from "fs/promises";
 import chokidar from "chokidar";
 import { sort } from "fast-sort";
 
-import {
-  writeEntities,
-  writeEntity,
-  writeAssets,
-  writeHome,
-  writeSearch,
-  writeRandom,
-} from "./writers";
-import { createDatabase } from "./database";
-import { getEntities } from "./readers";
 import { Bock } from "./types";
 import { getArguments } from "./cli";
 
-(async () => {
-  const { articleRoot, outputFolder, watch, prettify } = getArguments();
+import readEntities from "./readers";
 
-  const entities = await getEntities(articleRoot);
+import writeAssets from "./writers/assets";
+import writeDatabase from "./writers/database";
+import writeHome from "./writers/home";
+import writeSearch from "./writers/search";
+import writeRandom from "./writers/random";
+import writeEntities from "./writers/entities";
+
+(async () => {
+  const {
+    articleRoot,
+    outputFolder,
+    watch,
+    prettify,
+    progress: showProgress,
+  } = getArguments();
+
+  const entities = await readEntities(articleRoot);
+
+  /**
+   * Prepare the Bock object.
+   */
   const bock: Bock = {
     articleRoot,
     outputFolder,
@@ -39,6 +48,7 @@ import { getArguments } from "./cli";
      */
     listOfPaths: Object.keys(entities),
     prettify,
+    showProgress,
   };
 
   await writeFile(
@@ -65,20 +75,20 @@ import { getArguments } from "./cli";
   writeAssets(bock);
   console.log(`Copied static assets`);
 
-  createDatabase(bock);
+  writeDatabase(bock);
   console.log(`Generated SQLite Database`);
 
-  if (watch) {
-    console.log(`Watching ${articleRoot} for changes`);
-    const watcher = chokidar.watch([`${articleRoot}/**/*.md`], {
-      persistent: true,
-    });
+  // if (watch) {
+  //   console.log(`Watching ${articleRoot} for changes`);
+  //   const watcher = chokidar.watch([`${articleRoot}/**/*.md`], {
+  //     persistent: true,
+  //   });
 
-    watcher.on("change", async (path) => {
-      let _path = path.replace(`${articleRoot}/`, "");
-      console.log(`${_path} changed... re-rendering`);
+  //   watcher.on("change", async (path) => {
+  //     let _path = path.replace(`${articleRoot}/`, "");
+  //     console.log(`${_path} changed... re-rendering`);
 
-      await writeEntity(bock, entities[_path]);
-    });
-  }
+  //     await writeEntity(bock, entities[_path]);
+  //   });
+  // }
 })();

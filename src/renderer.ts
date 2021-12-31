@@ -12,6 +12,10 @@ import packageInfo from "../package.json";
  * https://stackoverflow.com/questions/39050788/nunjucks-template-not-found
  */
 const renderer = nunjucks.configure(`${__dirname}/templates`, {});
+
+/**
+ * Some custom filters
+ */
 renderer.addFilter("numeral", (number: string, format: string) => {
   const n = numeral(number);
   return format === "value" ? n.value() : n.format(format);

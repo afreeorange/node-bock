@@ -2,9 +2,9 @@ import { existsSync, readFileSync, unlinkSync } from "fs";
 
 import sqlite3 from "sqlite3";
 
-import { Bock } from "./types";
+import { Bock } from "../types";
 
-export const createDatabase = async (bock: Bock) => {
+const database = async (bock: Bock) => {
   const databasePath = `${bock.outputFolder}/entities.db`;
 
   try {
@@ -109,3 +109,5 @@ export const createDatabase = async (bock: Bock) => {
   insertStatement.finalize();
   db.close();
 };
+
+export default database;
