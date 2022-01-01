@@ -8,7 +8,7 @@ article. It took around {{ statistics.generationTimeInSeconds }} seconds to
 generate this mess on a system running {{ system.os.distro }} {{
 system.os.release }} ({{ system.os.arch }}) with a {{ system.cpu.cores }}-core
 {{ system.cpu.speed }}GHz {{ system.cpu.manufacturer }} {{ system.cpu.brand }}
-CPU and {{ system.memory.total | numeral('0.00b')}} of memory.
+CPU and {{ system.memory.total | numeral('0b')}} of memory
 {% endblock statistics %}
 
 {% block main %}

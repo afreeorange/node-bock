@@ -18,7 +18,6 @@ npx ts-node -T src/index.ts \
     --article-root ~/personal/wiki.nikhil.io.articles \
     --output-folder ~/personal/wiki.nikhil.io.articles.out \
     --prettify \
-    --progress \
     && \
     pushd ~/personal/wiki.nikhil.io.articles.out && \
         find . -type f -exec gzip -9 '{}' \; -exec mv '{}.gz' '{}' \;  && \
