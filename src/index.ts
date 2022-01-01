@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
+import process from "process";
 import { writeFile } from "fs/promises";
+import { system } from "systeminformation";
 
 import chokidar from "chokidar";
 import { sort } from "fast-sort";
+import { cpu, osInfo, mem } from "systeminformation";
 
 import { Bock } from "./types";
 import { getArguments } from "./cli";
@@ -15,9 +18,13 @@ import writeDatabase from "./writers/database";
 import writeHome from "./writers/home";
 import writeSearch from "./writers/search";
 import writeRandom from "./writers/random";
-import writeEntities from "./writers/entities";
+import writeEntities, { writeOne as writeEntity } from "./writers/entities";
+
+import { Statistics } from "./helpers";
 
 (async () => {
+  let p = process.hrtime();
+
   const {
     articleRoot,
     outputFolder,
@@ -27,6 +34,9 @@ import writeEntities from "./writers/entities";
   } = getArguments();
 
   const entities = await readEntities(articleRoot);
+  const entityList = Object.values(entities);
+  const statistics = new Statistics();
+  statistics.setArticleCount(entityList.length);
 
   /**
    * Prepare the Bock object.
@@ -49,6 +59,12 @@ import writeEntities from "./writers/entities";
     listOfPaths: Object.keys(entities),
     prettify,
     showProgress,
+    statistics,
+    system: {
+      cpu: await cpu(),
+      os: await osInfo(),
+      memory: await mem(),
+    },
   };
 
   await writeFile(
@@ -63,32 +79,44 @@ import writeEntities from "./writers/entities";
   await writeEntities(bock);
   console.log(`Finished writing articles`);
 
-  await writeHome(bock);
-  console.log(`Rendered Homepage`);
-
+  console.log(`Going to render Search page`);
   await writeSearch(bock);
   console.log(`Rendered Search`);
 
+  console.log(`Going to render Randomize page`);
   await writeRandom(bock);
   console.log(`Rendered Random`);
 
+  console.log(`Going to copy assets`);
   writeAssets(bock);
   console.log(`Copied static assets`);
 
+  console.log(`Going to generate SQLite database`);
   writeDatabase(bock);
   console.log(`Generated SQLite Database`);
 
-  // if (watch) {
-  //   console.log(`Watching ${articleRoot} for changes`);
-  //   const watcher = chokidar.watch([`${articleRoot}/**/*.md`], {
-  //     persistent: true,
-  //   });
+  /**
+   * Home page should be rendered last because it's the only page that consumes
+   * all dem ✨ Statistics ✨
+   */
+  p = process.hrtime(p);
+  statistics.updateGenerationTime(p[0]);
 
-  //   watcher.on("change", async (path) => {
-  //     let _path = path.replace(`${articleRoot}/`, "");
-  //     console.log(`${_path} changed... re-rendering`);
+  console.log(`Going to render Homepage`);
+  await writeHome(bock);
+  console.log(`Rendered Homepage`);
 
-  //     await writeEntity(bock, entities[_path]);
-  //   });
-  // }
+  if (watch) {
+    console.log(`Watching ${articleRoot} for changes`);
+    const watcher = chokidar.watch([`${articleRoot}/**/*.md`], {
+      persistent: true,
+    });
+
+    watcher.on("change", async (path) => {
+      let _path = path.replace(`${articleRoot}/`, "");
+      console.log(`${_path} changed... re-rendering`);
+
+      await writeEntity(bock, entities[_path]);
+    });
+  }
 })();

@@ -332,7 +332,6 @@ footer li a::before {
   height: 1em;
   content: "";
   display: inline-block;
-  margin-left: -1.25em;
 
   background-color: var(--color-highlight);
   vertical-align: middle;
@@ -443,9 +442,5 @@ footer li a::before {
 @media all and (max-width: 700px) {
   :root {
     --max-width: 95%;
-  }
-
-  footer li a::before {
-    margin-left: 0;
   }
 }

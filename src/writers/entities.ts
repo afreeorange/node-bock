@@ -11,7 +11,7 @@ import { render } from "../renderer";
 import { JSON_PADDING } from "../constants";
 import articleWriters from "./articles";
 
-const writeOne = async (bock: Bock, entity: Entity): Promise<void> => {
+export const writeOne = async (bock: Bock, entity: Entity): Promise<void> => {
   const { outputFolder, articleRoot, prettify } = bock;
 
   const {

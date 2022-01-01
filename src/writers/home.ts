@@ -10,8 +10,15 @@ import { Bock } from "../types";
 import { render } from "../renderer";
 
 const home = async (bock: Bock) => {
-  const { entities, articleRoot, outputFolder, prettify, listOfEntities } =
-    bock;
+  const {
+    entities,
+    articleRoot,
+    outputFolder,
+    prettify,
+    listOfEntities,
+    statistics,
+    system,
+  } = bock;
 
   let html;
   let source;
@@ -76,6 +83,9 @@ const home = async (bock: Bock) => {
           .desc("modified")
           .filter((e) => e.uri !== "ROOT" || e.type !== "folder")
           .slice(0, MAX_RECENT_ARTICLES),
+
+        statistics,
+        system,
       },
       prettify,
     }),

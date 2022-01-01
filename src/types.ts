@@ -1,3 +1,6 @@
+import { Systeminformation } from "systeminformation";
+import { Statistics } from "./helpers";
+
 export type EntityType = "article" | "folder";
 
 export type EntityHierarchy = {
@@ -62,6 +65,12 @@ export type Bock = {
   listOfPaths: string[];
   prettify: boolean;
   showProgress: boolean;
+  statistics: Statistics;
+  system: {
+    os: Systeminformation.OsData;
+    cpu: Systeminformation.CpuData;
+    memory: Systeminformation.MemData;
+  };
 };
 
 /**
@@ -86,5 +95,3 @@ export type TemplateVariables = {
     version: string;
   };
 } & Record<string, any>;
-
-export type Statistics = {};

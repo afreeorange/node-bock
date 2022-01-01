@@ -2,6 +2,9 @@
 
 * [ ] Check if git repo
 * [ ] Check output folder
+* [ ] Speed up Raw: don't generate it, use CSS Tabs instead!
+* [ ] Index page for 'similar' articles?
+* [ ] What if an article is moved?
 * [x] Home page
 * [ ] remove trailing slashes
 * [ ] LR local server

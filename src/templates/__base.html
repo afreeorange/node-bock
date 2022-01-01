@@ -65,6 +65,9 @@
       {% block main %}{% endblock main %}
       </main>
       <footer>
+        {% if type === "home" %}
+        <p>{% block statistics %}{% endblock statistics %}</p>
+        {% endif %}
         <ul>
           {% if type === "article" or type === "home" or type === "raw" %}
             {% if entity.sizeInBytes != 0 %}

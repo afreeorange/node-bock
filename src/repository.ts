@@ -1,9 +1,16 @@
+/**
+ * Yeah, I'm just parsing command-line `git` output here. Every other option
+ * (simplegit, node-git) was too heavy and complicated for the simple shit I
+ * wanted. No pipes or anything UNIX-y btw.
+ */
+
 import util from "util";
+const exec = util.promisify(require("child_process").exec);
+
 import { stat } from "fs/promises";
-import { stdout } from "process";
+
 import { Revision, RevisionList } from "./types";
 import parser from "./parser";
-const exec = util.promisify(require("child_process").exec);
 
 export const getDates = async (
   articleRoot: string,

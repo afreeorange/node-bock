@@ -110,12 +110,14 @@ const revision = async (
 };
 
 const revisions = async (bock: Bock, article: Article): Promise<void> => {
-  const { outputFolder } = bock;
+  const { outputFolder, statistics } = bock;
 
   await mkdirp(`${outputFolder}/${article.uri}/revisions`);
   await Promise.all(
     article.revisions.map(async (r) => revision(bock, article, r)),
   );
+
+  statistics.updateArticleRevisionsCount(article.revisions.length);
 };
 
 export default {

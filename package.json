@@ -1,6 +1,6 @@
 {
   "name": "bock",
-  "version": "1.5.0",
+  "version": "1.7.0",
   "author": "Nikhil Anand <mail@nikhil.io> (https://nikhil.io)",
   "license": "MIT",
   "main": "./dist/src/index.js",
@@ -29,6 +29,7 @@
     "outputPath": "dist"
   },
   "dependencies": {
+    "chalk": "^5.0.0",
     "chokidar": "^3.5.2",
     "commander": "^8.3.0",
     "date-fns": "^2.25.0",
@@ -44,6 +45,7 @@
     "numeral": "^2.0.6",
     "nunjucks": "^3.2.3",
     "sqlite3": "^5.0.2",
+    "systeminformation": "^5.9.17",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

@@ -70,3 +70,36 @@ export const trim = (s: string) => s.replace(/^\s+|\s+$/g, "");
 
 export const removeTrailingSlashes = (s: string) =>
   s.replace(/(.*)[\/].$/g, "$1");
+
+/**
+ * TODO: How would you accomplish this with a simple closure?
+ */
+export class Statistics {
+  articleCount: number;
+  revisionCount: number;
+  revisionAverage: number;
+  generationTimeInSeconds: number;
+
+  constructor() {
+    /**
+     * NOTE: Starting with 1 since we include the 'fake' ROOT entity...
+     */
+    this.articleCount = 1;
+    this.revisionCount = 0;
+    this.revisionAverage = 0;
+    this.generationTimeInSeconds = 0;
+  }
+
+  setArticleCount(count: number) {
+    this.articleCount = count - 1;
+  }
+
+  updateArticleRevisionsCount(count: number) {
+    this.revisionCount += count;
+    this.revisionAverage = Math.round(this.revisionCount / this.articleCount);
+  }
+
+  updateGenerationTime(count: number) {
+    this.generationTimeInSeconds = count;
+  }
+}
