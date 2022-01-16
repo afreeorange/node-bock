@@ -28,6 +28,7 @@ npx ts-node -T src/index.ts \
 ## References
 
 * [`systeminformation` package documentation](https://systeminformation.io/cpu.html)
+* [Advanced Git: Graphs, Hashes, and Compression, Oh My!](https://www.youtube.com/watch?v=ig5E8CcdM9g)
 
 ## License
 
