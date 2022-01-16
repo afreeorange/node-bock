@@ -25,6 +25,8 @@ renderer.addFilter("date", (date: Date, format: string = "MMM") =>
   formatDate(date, format),
 );
 
+renderer.addGlobal("now", new Date());
+
 export const render = ({
   template,
   variables,
