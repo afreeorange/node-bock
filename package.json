@@ -1,6 +1,6 @@
 {
   "name": "bock",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "author": "Nikhil Anand <mail@nikhil.io> (https://nikhil.io)",
   "license": "MIT",
   "main": "./dist/src/index.js",

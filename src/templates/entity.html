@@ -6,10 +6,10 @@ There are {{ statistics.articleCount | numeral("0,0") }} articles in this wiki
 with {{ statistics.revisionCount | numeral("0,0") }} total revisions and an
 average of {{ statistics.revisionAverage | numeral("0,0") }} revisions per
 article. On {{ now | date("PPPP 'at' h:mm bbb") }}, it took around {{
-statistics.generationTimeInSeconds }} seconds to generate this mess on a system
-running {{ system.os.distro }} {{ system.os.release }} ({{ system.os.arch }})
-with a {{ system.cpu.cores }}-core {{ system.cpu.speed }}GHz {{
-system.cpu.manufacturer }} {{ system.cpu.brand }} CPU and {{
+statistics.generationTimeInSeconds }} seconds to generate this whole mess on a
+system running {{ system.os.distro }} {{ system.os.release }} ({{
+system.os.arch }}) with a {{ system.cpu.cores }}-core {{ system.cpu.speed }}GHz
+{{ system.cpu.manufacturer }} {{ system.cpu.brand }} CPU and {{
 system.memory.total | numeral('0b')}} of memory.
 
 {% endblock statistics %}
